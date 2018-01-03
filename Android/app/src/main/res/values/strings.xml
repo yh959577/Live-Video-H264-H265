@@ -6,4 +6,9 @@
     <string name="startLive">Start Live</string>
     <string name="stopLive">Stop Live</string>
     <string name="setting_title">Setting</string>
+    <string name="switch_camera">Switch Camera</string>
+    <string name="fill_in_SendIp">fill the push address (ip:port)</string>
+    <string name="fill_in_ReceiveIp">fill the pull address (ip:port) </string>
+    <string name="Ip_Empty_Error">the ip cannot empty</string>
+    <string name="Ip_Error">the ip is Error</string>
 </resources>

@@ -6,7 +6,8 @@ package com.example.hy.liveexampleandroid.LiveSend;
 
 public interface SendPresenter {
     int initialCamera();
-    int startPushVideo();
+    int startPushVideo(String ip);
     void stopPushVideo();
     void takePic();
+    void switchCamera();
 }

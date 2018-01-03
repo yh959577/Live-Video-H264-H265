@@ -9,9 +9,9 @@
 
     <Button
         android:id="@+id/sendButton"
-        android:text="@string/LiveSend"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/LiveSend"
         />
 
     <Button
