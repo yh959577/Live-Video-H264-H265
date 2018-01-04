@@ -10,13 +10,14 @@ import android.support.v7.app.AppCompatActivity;
 import java.util.ArrayList;
 
 /**
- * Created by Administrator on 2018/1/2.
+ * Created by Hamik Young on 2018/1/2.
  */
 
 public class PermissionUtil {
    private static ArrayList<String> requestPermission=new ArrayList<>();
 
-  public static void checkPermission(@NonNull AppCompatActivity activity, @NonNull String...permission){
+  public static void requestPermission(@NonNull AppCompatActivity activity, @NonNull String...permission){
+
       for (String perPermission: permission) {
           if (ContextCompat.checkSelfPermission(activity,perPermission)!= PackageManager.PERMISSION_GRANTED){
               requestPermission.add(perPermission);
@@ -27,7 +28,7 @@ public class PermissionUtil {
       }
   }
 
-
-
-
+  public static boolean isPermmisonGrant(AppCompatActivity activity,@NonNull String permission){
+      return ContextCompat.checkSelfPermission(activity,permission)==PackageManager.PERMISSION_GRANTED;
+  }
 }

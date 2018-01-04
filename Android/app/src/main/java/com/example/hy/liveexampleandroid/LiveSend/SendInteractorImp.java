@@ -1,42 +1,36 @@
 package com.example.hy.liveexampleandroid.LiveSend;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.graphics.SurfaceTexture;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CaptureFailure;
-import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.CaptureResult;
-import android.hardware.camera2.TotalCaptureResult;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.view.Surface;
-import android.widget.Toast;
+import android.view.TextureView;
 
-import com.example.hy.liveexampleandroid.PermissionUtil;
-import com.example.hy.liveexampleandroid.ToastUtil;
+import com.example.hy.liveexampleandroid.Push.Pusher;
+import com.example.hy.liveexampleandroid.Push.PusherImp;
 
 /**
- * Created by Administrator on 2018/1/2.
+ * Created by Hamik Young on 2018/1/4.
  */
 
 public class SendInteractorImp implements SendInteractor {
+    private Pusher mPusher;
 
-  //  private AppCompatActivity mActivity;
-    private CameraManager mCameraManager;
-    private String[] cameraList;
-    private CameraDevice.StateCallback mCameraDeviceStateCallback;
-    private CameraCaptureSession.StateCallback mSessionStateCallback;
-    private CameraCaptureSession.CaptureCallback mSessionCaptureCallback;
+    @Override
+    public void initialPusher(TextureView textureView, CameraManager cameraManager,String pushAddress) {
+      mPusher=PusherImp.buildPusher(textureView, cameraManager,pushAddress);
+      mPusher.initial();
+    }
 
-    public SendInteractorImp() {
+    @Override
+    public void stopPush() {
 
+    }
+
+    @Override
+    public void startPush() {
+      mPusher.startPush();
+    }
+
+    @Override
+    public void onDestroy() {
+       mPusher.onDestroy();
     }
 }

@@ -1,9 +1,11 @@
 package com.example.hy.liveexampleandroid.LiveSend;
 
 import android.graphics.SurfaceTexture;
+import android.hardware.camera2.CameraManager;
+import android.view.TextureView;
 
 /**
- * Created by Administrator on 2017/12/29.
+ * Created by Hamik Young on 2017/12/29.
  */
 
 public interface SendView {
@@ -13,5 +15,7 @@ public interface SendView {
     void IpError();
     void btnTextChangeToStart();
     void btnTextChangeToStop();
-    void initialCamera();
+    TextureView supplyTextureView();
+    CameraManager supplyCameraManager();
+    String getPushIp();
 }

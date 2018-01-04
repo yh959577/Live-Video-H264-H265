@@ -3,42 +3,54 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-    <EditText
-        android:id="@+id/push_IP"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:shadowColor="@color/colorPrimary"
-        android:hint="@string/fill_in_SendIp"
-        />
+    android:orientation="vertical"
+    android:background="@color/black_ground"
+    >
+
 
     <TextureView
         android:id="@+id/video_texture"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/send_live_btn"
+        android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         />
     <Button
         android:id="@+id/send_live_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/startLive"
+        android:background="@color/button_color"
+        android:textColor="@color/colorAccent"
         app:layout_constraintHorizontal_weight="10"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/take_pic_btn"
-        app:layout_constraintTop_toBottomOf="@id/video_texture"
         app:layout_constraintBottom_toBottomOf="parent"
+
         />
     <Button
         android:id="@+id/take_pic_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/TakePic"
+        android:background="@color/button_color"
+        android:textColor="@color/colorAccent"
         app:layout_constraintHorizontal_weight="5"
         app:layout_constraintLeft_toRightOf="@id/send_live_btn"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/video_texture"
+        />
+    <EditText
+        android:id="@+id/push_IP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:shadowColor="@color/colorAccent"
+        android:hint="@string/fill_in_SendIp"
+        android:textColorHint="@color/hint_color"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
         />
 </android.support.constraint.ConstraintLayout>

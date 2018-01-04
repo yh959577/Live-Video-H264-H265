@@ -6,13 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import com.example.hy.liveexampleandroid.IpChecker;
 
 /**
- * Created by Administrator on 2018/1/2.
+ * Created by Hamik Young on 2018/1/2.
  */
 
 public class SendPresenterImp implements SendPresenter {
    private SendView mSendView;
    private SendInteractor mSendInteractor;
-   private CameraManager mCameraManager;
+
 
 
     public SendPresenterImp(SendView sendView,SendInteractor sendInteractor){
@@ -22,8 +22,9 @@ public class SendPresenterImp implements SendPresenter {
 
 
     @Override
-    public int initialCamera() {
-        mSendView.initialCamera();
+    public int initialPusher() {
+        mSendInteractor.initialPusher(mSendView.supplyTextureView(),mSendView.supplyCameraManager(),
+                mSendView.getPushIp());
         return 0;
     }
 
@@ -33,7 +34,7 @@ public class SendPresenterImp implements SendPresenter {
             mSendView.IpIsEmpty();
         else if (IpChecker.IsIpValid(ip)) {
             mSendView.btnTextChangeToStop();
-
+            mSendInteractor.startPush();
         }
         else
             mSendView.IpError();
@@ -53,5 +54,10 @@ public class SendPresenterImp implements SendPresenter {
     @Override
     public void switchCamera() {
 
+    }
+
+    @Override
+    public void onDestroy() {
+        mSendInteractor.onDestroy();
     }
 }
