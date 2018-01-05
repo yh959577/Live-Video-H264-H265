@@ -1,10 +1,5 @@
 package com.example.hy.liveexampleandroid.LiveSend;
 
-import android.hardware.camera2.CameraManager;
-import android.support.v7.app.AppCompatActivity;
-
-import com.example.hy.liveexampleandroid.IpChecker;
-
 /**
  * Created by Hamik Young on 2018/1/2.
  */
@@ -30,14 +25,16 @@ public class SendPresenterImp implements SendPresenter {
 
     @Override
     public int startPushVideo(String ip){
-        if (IpChecker.IsIpEmpty(ip))
-            mSendView.IpIsEmpty();
-        else if (IpChecker.IsIpValid(ip)) {
-            mSendView.btnTextChangeToStop();
-            mSendInteractor.startPush();
-        }
-        else
-            mSendView.IpError();
+//        if (IpChecker.IsIpEmpty(ip))
+//            mSendView.IpIsEmpty();
+//        else if (IpChecker.IsIpValid(ip)) {
+//            mSendView.btnTextChangeToStop();
+//            mSendInteractor.startPush();
+//        }
+//        else
+//            mSendView.IpError();
+        mSendView.btnTextChangeToStop();
+        mSendInteractor.startPush();
         return 0;
     }
 

@@ -1,4 +1,4 @@
-package com.example.hy.liveexampleandroid;
+package com.example.hy.liveexampleandroid.Util;
 
 import android.content.Context;
 import android.content.pm.PackageManager;

@@ -12,7 +12,6 @@ import com.example.hy.liveexampleandroid.Push.Queue.QueueManager;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 /**
  * Created by Hamik Young on 2018/1/4.
@@ -48,7 +47,7 @@ public class PusherImp implements Pusher {
                     FileOutputStream outputStream=new FileOutputStream(new File(path));
                     while (true){
                         try {
-                            outputStream.write(QueueManager.takeDataFromImageQueue());
+                            outputStream.write(QueueManager.takeDataFromYUVQueue());
                         }catch (Exception e){
 
                         }

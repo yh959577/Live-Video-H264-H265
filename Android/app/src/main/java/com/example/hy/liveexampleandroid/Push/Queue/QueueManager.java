@@ -1,9 +1,5 @@
 package com.example.hy.liveexampleandroid.Push.Queue;
 
-import android.media.Image;
-
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -11,15 +7,15 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 
 public class QueueManager {
-    private static LinkedBlockingQueue<byte[]> ImageQueue = new LinkedBlockingQueue();
+    private static LinkedBlockingQueue<byte[]> YUVQueue = new LinkedBlockingQueue();
     private static LinkedBlockingQueue<byte[]> FrameQueue = new LinkedBlockingQueue();
 
-    public static void putDataToImageQueue(byte[] imageData) throws InterruptedException {
-        ImageQueue.put(imageData);
+    public static void putDataToYUVQueue(byte[] imageData) throws InterruptedException {
+        YUVQueue.put(imageData);
     }
 
-    public static byte[] takeDataFromImageQueue() throws InterruptedException {
-        return ImageQueue.take();
+    public static byte[] takeDataFromYUVQueue() throws InterruptedException {
+        return YUVQueue.take();
     }
 
     public static void putDataToFrameQueue(byte[] frameData) throws InterruptedException {

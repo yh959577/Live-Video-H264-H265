@@ -2,10 +2,8 @@ package com.example.hy.liveexampleandroid.Main;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
@@ -13,9 +11,9 @@ import android.widget.Toast;
 
 import com.example.hy.liveexampleandroid.LivePlayer.PlayActivity;
 import com.example.hy.liveexampleandroid.LiveSend.SendActivity;
-import com.example.hy.liveexampleandroid.PermissionUtil;
+import com.example.hy.liveexampleandroid.Util.PermissionUtil;
 import com.example.hy.liveexampleandroid.R;
-import com.example.hy.liveexampleandroid.ToastUtil;
+import com.example.hy.liveexampleandroid.Util.ToastUtil;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {

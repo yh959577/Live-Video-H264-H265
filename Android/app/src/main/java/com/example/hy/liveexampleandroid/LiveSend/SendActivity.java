@@ -1,45 +1,19 @@
 package com.example.hy.liveexampleandroid.LiveSend;
 
-import android.annotation.SuppressLint;
-import android.graphics.ImageFormat;
-import android.graphics.Matrix;
-import android.graphics.RectF;
-import android.graphics.SurfaceTexture;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.CaptureResult;
-import android.hardware.camera2.TotalCaptureResult;
-import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.Image;
-import android.media.ImageReader;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.util.Size;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.hy.liveexampleandroid.R;
-import com.example.hy.liveexampleandroid.ToastUtil;
-
-import java.nio.ByteBuffer;
-import java.util.Arrays;
+import com.example.hy.liveexampleandroid.Util.ToastUtil;
 
 /**
  * Created by Hamik Young on 2017/12/29.
