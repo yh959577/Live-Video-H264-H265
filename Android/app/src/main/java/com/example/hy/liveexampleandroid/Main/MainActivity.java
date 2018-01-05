@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.playButton).setOnClickListener(this);
         PermissionUtil.requestPermission(this,Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.RECORD_AUDIO);
+
     }
     @Override
     public void onClick(View view) {

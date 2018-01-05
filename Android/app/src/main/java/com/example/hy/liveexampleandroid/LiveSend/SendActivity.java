@@ -10,10 +10,12 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.example.hy.liveexampleandroid.R;
 import com.example.hy.liveexampleandroid.Util.ToastUtil;
+import com.example.hy.liveexampleandroid.View.SettingPopupWindowView;
 
 /**
  * Created by Hamik Young on 2017/12/29.
@@ -75,6 +77,8 @@ public class SendActivity extends AppCompatActivity implements
 
     @Override
     public void showSettingPopWindow() {
+        PopupWindow window=new PopupWindow(new SettingPopupWindowView(this),100,100,true);
+        window.showAsDropDown(mSendBtn,0,20);
 
     }
 
