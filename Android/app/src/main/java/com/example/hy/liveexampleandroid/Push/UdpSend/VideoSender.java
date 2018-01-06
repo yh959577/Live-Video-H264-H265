@@ -5,4 +5,5 @@ package com.example.hy.liveexampleandroid.Push.UdpSend;
  */
 
 public interface VideoSender {
+    void sendVideoData(String pushAddress);
 }

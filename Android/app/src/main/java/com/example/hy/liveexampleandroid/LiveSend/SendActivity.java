@@ -3,7 +3,9 @@ package com.example.hy.liveexampleandroid.LiveSend;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.TextureView;
@@ -29,7 +31,7 @@ public class SendActivity extends AppCompatActivity implements
     private EditText mEditText;
 
     private SendPresenter presenter;
-
+    private PopupWindow mPopupWindow=null;
 
     private static final String TAG = "SendActivity";
 
@@ -77,9 +79,17 @@ public class SendActivity extends AppCompatActivity implements
 
     @Override
     public void showSettingPopWindow() {
-        PopupWindow window=new PopupWindow(new SettingPopupWindowView(this),100,100,true);
-        window.showAsDropDown(mSendBtn,0,20);
+        if (mPopupWindow==null) {
+            mPopupWindow = new PopupWindow(new SettingPopupWindowView(this),
+                    ConstraintLayout.LayoutParams.MATCH_PARENT,
+                    ConstraintLayout.LayoutParams.WRAP_CONTENT, true);
+        }
+        mPopupWindow.setOutsideTouchable(false);
+        mPopupWindow.setOnDismissListener(()->{
 
+        });
+       // window.showAsDropDown(mEditText);
+        mPopupWindow.showAtLocation(this.getWindow().getDecorView(), Gravity.CENTER,0,0);
     }
 
     @Override

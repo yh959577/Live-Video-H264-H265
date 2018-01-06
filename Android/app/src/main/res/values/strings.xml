@@ -16,4 +16,7 @@
     <string name="btn_1080p">1080p</string>
     <string name="btn_H264">H264</string>
     <string name="btn_H265">H265</string>
+    <string name="preview_resolution">PreviewResolution</string>
+    <string name="push_resolution">PushResolution</string>
+    <string name="encode_type">EncodeType</string>
 </resources>

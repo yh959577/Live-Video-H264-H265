@@ -2,12 +2,14 @@ package com.example.hy.liveexampleandroid.Push;
 
 import android.hardware.camera2.CameraManager;
 import android.os.Environment;
+import android.util.Size;
 import android.view.TextureView;
 
 import com.example.hy.liveexampleandroid.Push.Camera.Camera;
 import com.example.hy.liveexampleandroid.Push.Camera.CameraImp;
 import com.example.hy.liveexampleandroid.Push.Encoder.Encoder;
 import com.example.hy.liveexampleandroid.Push.Queue.QueueManager;
+import com.example.hy.liveexampleandroid.Push.UdpSend.VideoSender;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,14 +23,16 @@ public class PusherImp implements Pusher {
     private String mPushAddress;
     private Camera mCamera;
     private Encoder mEncoder;
+    private VideoSender mVideoSender;
+    public static Size[] supportSize ;
 
-  public   static PusherImp buildPusher(TextureView textureView, CameraManager cameraManager,String pushAddress){
-        return new PusherImp(textureView,cameraManager,pushAddress);
+    public static PusherImp buildPusher(TextureView textureView, CameraManager cameraManager, String pushAddress) {
+        return new PusherImp(textureView, cameraManager, pushAddress);
     }
 
-    private PusherImp(TextureView textureView, CameraManager cameraManager,String pushAddress){
-        mCamera=new CameraImp(textureView,cameraManager);
-        mPushAddress=pushAddress;
+    private PusherImp(TextureView textureView, CameraManager cameraManager, String pushAddress) {
+        mCamera = new CameraImp(textureView, cameraManager);
+        mPushAddress = pushAddress;
     }
 
     @Override
@@ -39,26 +43,8 @@ public class PusherImp implements Pusher {
     @Override
     public void startPush() {
         mCamera.setIsProcessImage(true);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    String path=Environment.getExternalStorageDirectory().getPath()+"/testYUV.yuv";
-                    FileOutputStream outputStream=new FileOutputStream(new File(path));
-                    while (true){
-                        try {
-                            outputStream.write(QueueManager.takeDataFromYUVQueue());
-                        }catch (Exception e){
-
-                        }
-                    }
-
-
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+        mEncoder.startEncoder();
+        mVideoSender.sendVideoData(mPushAddress);
     }
 
     @Override

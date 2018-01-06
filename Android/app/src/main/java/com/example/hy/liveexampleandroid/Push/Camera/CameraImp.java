@@ -21,6 +21,8 @@ import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
 
+import com.example.hy.liveexampleandroid.Push.Pusher;
+import com.example.hy.liveexampleandroid.Push.PusherImp;
 import com.example.hy.liveexampleandroid.Push.Queue.QueueManager;
 
 import java.nio.ByteBuffer;
@@ -36,7 +38,7 @@ public class CameraImp implements Camera ,TextureView.SurfaceTextureListener,Ima
     private CameraDevice.StateCallback mCameraDeviceStateCallback;
     private CameraCaptureSession.StateCallback mCameraCaptureSessionStateCallback;
     private CaptureRequest.Builder mPreviewBuilder;
-    private Size[] mPreviewSupportSize;
+    private Size[] mSupportSize=null;
     private Size settingSize;
     private CameraDevice mCameraDevice;
     private TextureView mTextureView;
@@ -70,7 +72,6 @@ public class CameraImp implements Camera ,TextureView.SurfaceTextureListener,Ima
         mImageReader.close();
         mCameraDevice.close();
     }
-
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
@@ -168,7 +169,6 @@ public class CameraImp implements Camera ,TextureView.SurfaceTextureListener,Ima
         double scale=(double) (settingSize.getHeight())/(double) (settingSize.getWidth());
         int suitableWidth=(int)(height*scale);
         ConstraintLayout.LayoutParams layoutParams=new ConstraintLayout.LayoutParams(suitableWidth,height);
-
         layoutParams.topToTop= ConstraintLayout.LayoutParams.PARENT_ID;
         layoutParams.bottomToBottom= ConstraintLayout.LayoutParams.PARENT_ID;
         layoutParams.leftToLeft=ConstraintLayout.LayoutParams.PARENT_ID;
@@ -206,9 +206,10 @@ public class CameraImp implements Camera ,TextureView.SurfaceTextureListener,Ima
             StreamConfigurationMap map=cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 
             assert map!=null;
-            mPreviewSupportSize=map.getOutputSizes(SurfaceTexture.class);
-            settingSize =mPreviewSupportSize[2];
-            Log.i(TAG, "initialCamera: size array=="+ Arrays.toString(mPreviewSupportSize));
+            mSupportSize =map.getOutputSizes(SurfaceTexture.class);
+            settingSize = mSupportSize[0];
+            PusherImp.supportSize=mSupportSize.clone();
+            Log.i(TAG, "initialCamera: size array=="+ Arrays.toString(mSupportSize));
             mCameraManager.openCamera(mCameraList[0], mCameraDeviceStateCallback, mHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
