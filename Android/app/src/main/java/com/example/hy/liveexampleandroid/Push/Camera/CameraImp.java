@@ -12,6 +12,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
@@ -21,10 +22,12 @@ import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
 
-import com.example.hy.liveexampleandroid.Push.Pusher;
 import com.example.hy.liveexampleandroid.Push.PusherImp;
 import com.example.hy.liveexampleandroid.Push.Queue.QueueManager;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
@@ -95,19 +98,20 @@ public class CameraImp implements Camera ,TextureView.SurfaceTextureListener,Ima
     }
 
 
+    FileOutputStream fileOutputStream;
+
     @Override
     public void onImageAvailable(ImageReader reader) {
         Log.i(TAG, "onImageAvailable: ");
         Image image = reader.acquireNextImage();
         Log.i(TAG, "YUV_420_888toNV21: width=="+image.getWidth()+" height=="+image.getHeight());
         if (mIsProcessImage) {
-            try {
-                QueueManager.putDataToYUVQueue(convertImgToYUVData(image));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Log.i(TAG, "onImageAvailable: planes=="+Arrays.toString(image.getPlanes()));
 
+            if (QueueManager.getYUVSize()>=30){
+                QueueManager.pollDataFromYUVQueue();
+            }
+            QueueManager.addDataToYUVQueue(convertImgToYUVData(image));
+            Log.i(TAG, "onImageAvailable: planes=="+Arrays.toString(image.getPlanes()));
 
             Log.i(TAG, "onImageAvailable: push Image to queue");
         }

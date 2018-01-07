@@ -21,7 +21,7 @@ public class SendInteractorImp implements SendInteractor {
 
     @Override
     public void stopPush() {
-
+      mPusher.stopPush();
     }
 
     @Override

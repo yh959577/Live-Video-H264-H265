@@ -11,11 +11,13 @@ import android.view.TextureView;
 public interface SendView {
     void toastMessage(String message);
     void showSettingPopWindow();
-    void IpIsEmpty();
-    void IpError();
+    void IpEmptyError();
+    void IpInvalidError();
     void btnTextChangeToStart();
     void btnTextChangeToStop();
     TextureView supplyTextureView();
     CameraManager supplyCameraManager();
     String getPushIp();
+    boolean IpIsValid();
+    boolean IpIsEmpty();
 }

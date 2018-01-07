@@ -1,9 +1,12 @@
 package com.example.hy.liveexampleandroid.View;
 
 import android.content.Context;
+import android.media.MediaFormat;
+import android.support.annotation.StringRes;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Size;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -12,6 +15,10 @@ import android.widget.TextView;
 
 import com.example.hy.liveexampleandroid.Push.PusherImp;
 import com.example.hy.liveexampleandroid.R;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * Created by UPC on 2018/1/5.
@@ -29,34 +36,20 @@ public class SettingPopupWindowView extends ConstraintLayout {
     private TextView mPushSettingText;
     private TextView mPushTypeText;
 
-    private Size[] supportSize;
+    private Size[] mSupportSize;
     private RadioButton[] mPreviewBtns;
     private RadioButton[] mPushBtns;
+    private SparseArray<Size> mPreviewSizeMap;
+    private SparseArray<Size> mPushSizeMap;
+    private SparseArray<String> mPushTypeMap;
 
-
-    public SettingPopupWindowView(Context context) {
+    public SettingPopupWindowView(Context context,Size...supportSize) {
         super(context);
         setBackgroundColor(getResources().getColor(R.color.white_color));
-        supportSize= PusherImp.supportSize;
-        int btnNum=0;
-        if (supportSize.length>6){
-            btnNum=6;
-        }else {
-            btnNum=supportSize.length;
-        }
-        mPreviewBtns=new RadioButton[btnNum];
-        mPushBtns=new RadioButton[btnNum];
-
-        for (int i = 0; i <btnNum ; i++) {
-            RadioButton radioButton=new RadioButton(context);
-            radioButton.setText(String.valueOf(supportSize[i]));
-            mPreviewBtns[i]=radioButton;
-        }
-        for (int i = 0; i <btnNum ; i++) {
-            RadioButton radioButton=new RadioButton(context);
-            radioButton.setText(String.valueOf(supportSize[i]));
-            mPushBtns[i]=radioButton;
-        }
+        mSupportSize= PusherImp.supportSize;
+        mPreviewSizeMap =new SparseArray<>();
+        mPushSizeMap =new SparseArray<>();
+        mPushTypeMap =new SparseArray<>();
 
         initialRadioGroup(context);
         initialRadioBtn(context);
@@ -75,34 +68,67 @@ public class SettingPopupWindowView extends ConstraintLayout {
         mPreviewSettingGroup = new RadioGroup(context);
         mPushSettingGroup = new RadioGroup(context);
         mPushTypeGroup = new RadioGroup(context);
-
         mPreviewSettingGroup.setId(View.generateViewId());
         mPushSettingGroup.setId(View.generateViewId());
         mPushTypeGroup.setId(View.generateViewId());
-
     }
 
     private void initialRadioBtn(Context context) {
+        int btnNum=0;
+        if (mSupportSize.length>6){
+            btnNum=6;
+        }else {
+            btnNum= mSupportSize.length;
+        }
+        mPreviewBtns=new RadioButton[btnNum];
+        mPushBtns=new RadioButton[btnNum];
+
+        for (int i = 0; i <btnNum ; i++) {
+            RadioButton radioButton=new RadioButton(context);
+            initialSingleRadioBtn(radioButton,String.valueOf(mSupportSize[i]));
+            mPreviewBtns[i]=radioButton;
+            mPreviewSizeMap.put(radioButton.getId(),mSupportSize[i]);
+        }
+        for (int i = 0; i <btnNum ; i++) {
+            RadioButton radioButton=new RadioButton(context);
+            initialSingleRadioBtn(radioButton,String.valueOf(mSupportSize[i]));
+            mPushBtns[i]=radioButton;
+            mPushSizeMap.put(radioButton.getId(),mSupportSize[i]);
+        }
+
         mH264Btn = new RadioButton(context);
         mH265Btn = new RadioButton(context);
-        mH264Btn.setText(R.string.btn_H264);
-        mH265Btn.setText(R.string.btn_H265);
+        initialSingleRadioBtn(mH264Btn,R.string.btn_H264);
+        initialSingleRadioBtn(mH265Btn,R.string.btn_H265);
+        mPushTypeMap.put(mH264Btn.getId(), MediaFormat.MIMETYPE_VIDEO_AVC);
+        mPushTypeMap.put(mH265Btn.getId(),MediaFormat.MIMETYPE_VIDEO_HEVC);
+    }
+
+
+    private void initialSingleRadioBtn(RadioButton radioButton,int resId){
+        radioButton.setText(resId);
+        radioButton.setId(View.generateViewId());
+    }
+
+    private void initialSingleRadioBtn(RadioButton radioButton,CharSequence text){
+        radioButton.setText(text);
+        radioButton.setId(View.generateViewId());
     }
 
     private void initialText(Context context) {
         mPreviewSettingText = new TextView(context);
-        mPreviewSettingText.setText(R.string.preview_resolution);
-        mPreviewSettingText.setId(View.generateViewId());
+        initialSingleText(mPreviewSettingText,R.string.preview_resolution);
 
         mPushSettingText = new TextView(context);
-        mPushSettingText.setText(R.string.push_resolution);
-        mPushSettingText.setId(View.generateViewId());
+        initialSingleText(mPushSettingText,R.string.push_resolution);
 
         mPushTypeText = new TextView(context);
-        mPushTypeText.setText(R.string.encode_type);
-        mPushTypeText.setId(View.generateViewId());
+        initialSingleText(mPushTypeText,R.string.encode_type);
+    }
 
-
+    private void initialSingleText(TextView textView,@StringRes int ResId){
+          textView.setText(ResId);
+          textView.setId(View.generateViewId());
     }
 
     private void addRadioBtnToGroup(@LinearLayoutCompat.OrientationMode int orientation
@@ -111,18 +137,8 @@ public class SettingPopupWindowView extends ConstraintLayout {
         for (RadioButton btn : radioButtons) {
             radioGroup.addView(btn);
         }
+        radioGroup.check(radioButtons[0].getId());
     }
-
-    private void arrangeRadioGroup(RadioGroup radioGroup, TextView textView,TextView leftView) {
-        LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        layoutParams.topToBottom = textView.getId();
-        if (leftView!=null)
-        layoutParams.leftToRight=leftView.getId();
-        else layoutParams.leftToLeft=LayoutParams.PARENT_ID;
-    //    layoutParams.leftToLeft = LayoutParams.PARENT_ID;
-        addView(radioGroup, layoutParams);
-    }
-
 
 
     private void arrangeLayout() {
@@ -179,5 +195,17 @@ public class SettingPopupWindowView extends ConstraintLayout {
         layoutParams.leftToLeft=LayoutParams.PARENT_ID;
         layoutParams.rightToRight=LayoutParams.PARENT_ID;
         addView(mPushTypeGroup,layoutParams);
+    }
+
+    public Size getCheckedPreviewSize(){
+         return mPreviewSizeMap.get(mPreviewSettingGroup.getCheckedRadioButtonId());
+    }
+
+    public Size getCheckedPushSize(){
+        return mPushSizeMap.get(mPushSettingGroup.getCheckedRadioButtonId());
+    }
+
+    public String getCheckedType(){
+        return mPushTypeMap.get(mPushTypeGroup.getCheckedRadioButtonId());
     }
 }

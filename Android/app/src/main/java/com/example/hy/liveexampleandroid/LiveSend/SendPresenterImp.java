@@ -24,23 +24,22 @@ public class SendPresenterImp implements SendPresenter {
     }
 
     @Override
-    public int startPushVideo(String ip){
-//        if (IpChecker.IsIpEmpty(ip))
-//            mSendView.IpIsEmpty();
-//        else if (IpChecker.IsIpValid(ip)) {
-//            mSendView.btnTextChangeToStop();
-//            mSendInteractor.startPush();
-//        }
-//        else
-//            mSendView.IpError();
-        mSendView.btnTextChangeToStop();
-        mSendInteractor.startPush();
+    public int startPushVideo(){
+        if (mSendView.IpIsEmpty())
+            mSendView.IpEmptyError();
+        else if (!mSendView.IpIsValid())
+            mSendView.IpInvalidError();
+        else {
+            mSendView.btnTextChangeToStop();
+            mSendInteractor.startPush();
+        }
         return 0;
     }
 
     @Override
     public void stopPushVideo() {
      mSendView.btnTextChangeToStart();
+     mSendInteractor.stopPush();
     }
 
     @Override

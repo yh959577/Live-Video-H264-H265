@@ -1,5 +1,6 @@
 package com.example.hy.liveexampleandroid.Push.Queue;
 
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -7,22 +8,25 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 
 public class QueueManager {
-    private static LinkedBlockingQueue<byte[]> YUVQueue = new LinkedBlockingQueue();
-    private static LinkedBlockingQueue<byte[]> FrameQueue = new LinkedBlockingQueue();
+    private static ArrayBlockingQueue<byte[]> YUVQueue = new ArrayBlockingQueue(30);
+    private static ArrayBlockingQueue<byte[]> FrameQueue = new ArrayBlockingQueue(30);
 
-    public static void putDataToYUVQueue(byte[] imageData) throws InterruptedException {
-        YUVQueue.put(imageData);
+    public static void addDataToYUVQueue(byte[] imageData)  {
+        YUVQueue.add(imageData);
+    }
+    public static int getYUVSize(){
+        return YUVQueue.size();
     }
 
-    public static byte[] takeDataFromYUVQueue() throws InterruptedException {
-        return YUVQueue.take();
+    public static byte[] pollDataFromYUVQueue()  {
+        return YUVQueue.poll();
     }
 
-    public static void putDataToFrameQueue(byte[] frameData) throws InterruptedException {
-        FrameQueue.put(frameData);
+    public static void addDataToFrameQueue(byte[] frameData)  {
+        FrameQueue.add(frameData);
     }
 
-    public static byte[] takeDataFromFrameQueue() throws InterruptedException {
-        return FrameQueue.take();
+    public static byte[] pollDataFromFrameQueue(){
+        return FrameQueue.poll();
     }
 }

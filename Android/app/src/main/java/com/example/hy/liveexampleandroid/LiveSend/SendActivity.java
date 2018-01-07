@@ -3,6 +3,7 @@ package com.example.hy.liveexampleandroid.LiveSend;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.Size;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
@@ -15,8 +16,11 @@ import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import com.example.hy.liveexampleandroid.Push.PusherImp;
 import com.example.hy.liveexampleandroid.R;
+import com.example.hy.liveexampleandroid.Util.IpChecker;
 import com.example.hy.liveexampleandroid.Util.ToastUtil;
+import com.example.hy.liveexampleandroid.View.SettingPopupWindow;
 import com.example.hy.liveexampleandroid.View.SettingPopupWindowView;
 
 /**
@@ -24,15 +28,21 @@ import com.example.hy.liveexampleandroid.View.SettingPopupWindowView;
  */
 
 public class SendActivity extends AppCompatActivity implements
-        SendView, View.OnClickListener {
+        SendView, View.OnClickListener,PopupWindow.OnDismissListener {
 
     private Button mSendBtn;
     private TextureView mTextureView;
     private EditText mEditText;
 
-    private SendPresenter presenter;
-    private PopupWindow mPopupWindow=null;
+    private Size mPreviewSize;
+    private Size mPushSize;
+    private String mPushType;
 
+
+    private SendPresenter presenter;
+   // private PopupWindow mPopupWindow=null;
+
+    private SettingPopupWindow mPopupWindow=null;
     private static final String TAG = "SendActivity";
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,6 +53,7 @@ public class SendActivity extends AppCompatActivity implements
         mTextureView = findViewById(R.id.video_texture);
         mSendBtn.setOnClickListener(this);
         findViewById(R.id.take_pic_btn).setOnClickListener(this);
+        mEditText.setText("192.168.1.1:8080");
         presenter = new SendPresenterImp(this, new SendInteractorImp());
         presenter.initialPusher();
     }
@@ -79,26 +90,24 @@ public class SendActivity extends AppCompatActivity implements
 
     @Override
     public void showSettingPopWindow() {
-        if (mPopupWindow==null) {
-            mPopupWindow = new PopupWindow(new SettingPopupWindowView(this),
-                    ConstraintLayout.LayoutParams.MATCH_PARENT,
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT, true);
+        if (mSendBtn.getText().toString().equals(getResources().getString(R.string.startLive))) {
+            if (mPopupWindow == null) {
+                mPopupWindow = new SettingPopupWindow(this, PusherImp.supportSize);
+            }
+            mPopupWindow.setOutsideTouchable(true);
+            mPopupWindow.showAtLocation(this.getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+        }else {
+            ToastUtil.toast(this,getResources().getString(R.string.please_stop_push),Toast.LENGTH_SHORT);
         }
-        mPopupWindow.setOutsideTouchable(false);
-        mPopupWindow.setOnDismissListener(()->{
-
-        });
-       // window.showAsDropDown(mEditText);
-        mPopupWindow.showAtLocation(this.getWindow().getDecorView(), Gravity.CENTER,0,0);
     }
 
     @Override
-    public void IpIsEmpty() {
+    public void IpEmptyError() {
         mEditText.setError(getString(R.string.Ip_Empty_Error));
     }
 
     @Override
-    public void IpError() {
+    public void IpInvalidError() {
         mEditText.setError(getString(R.string.Ip_Error));
     }
 
@@ -130,11 +139,21 @@ public class SendActivity extends AppCompatActivity implements
     }
 
     @Override
+    public boolean IpIsValid() {
+        return IpChecker.IsIpValid(mEditText.getText().toString());
+    }
+
+    @Override
+    public boolean IpIsEmpty() {
+        return IpChecker.IsIpEmpty(mEditText.getText().toString());
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.send_live_btn:
                 if (mSendBtn.getText().toString().equals(getResources().getString(R.string.startLive))) {
-                    presenter.startPushVideo(mEditText.getText().toString());
+                    presenter.startPushVideo();
                 } else {
                     presenter.stopPushVideo();
                 }
@@ -145,5 +164,10 @@ public class SendActivity extends AppCompatActivity implements
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onDismiss() {
+
     }
 }
