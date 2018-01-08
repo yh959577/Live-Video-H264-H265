@@ -1,6 +1,10 @@
 package com.example.hy.liveexampleandroid.Push.Encoder;
 
+import android.media.MediaCodec;
+import android.media.MediaFormat;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Size;
 
 import com.example.hy.liveexampleandroid.Push.Queue.QueueManager;
 
@@ -9,19 +13,28 @@ import com.example.hy.liveexampleandroid.Push.Queue.QueueManager;
  */
 
 public class EncoderImp implements Encoder {
-    private static final String TAG="EncoderImp";
+    private static final String TAG = "EncoderImp";
+    private Thread mEncodeThread;
+    private String mEncodeType;
+    private Size mEncodeSize;
+    private MediaCodec mMediaCodec;
+    private MediaFormat mMediaFormat;
 
+    public EncoderImp() {
+
+
+
+        mEncodeThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                QueueManager.pollDataFromYUVQueue();
+            }
+        });
+    }
 
     @Override
     public void startEncoder() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                    QueueManager.pollDataFromYUVQueue();
-                    Log.i(TAG, "run: takeYUV");
-
-            }
-        }).start();
+       mEncodeThread.start();
     }
 
     @Override

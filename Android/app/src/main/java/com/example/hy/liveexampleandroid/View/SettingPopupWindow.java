@@ -12,9 +12,6 @@ import android.widget.PopupWindow;
  */
 
 public class SettingPopupWindow extends PopupWindow implements PopupWindow.OnDismissListener {
-    private Size mPreviewSize;
-    private Size mPushSize;
-    private String mPushType;
     private Size[] mSupportSizes;
     private SettingPopupWindowView mSettingPopupWindowView;
 
@@ -37,14 +34,14 @@ public class SettingPopupWindow extends PopupWindow implements PopupWindow.OnDis
     }
 
     public Size getPreviewSize() {
-        return mPreviewSize;
+        return mSettingPopupWindowView.getCheckedPreviewSize();
     }
 
     public Size getPushSize() {
-        return mPushSize;
+        return mSettingPopupWindowView.getCheckedPushSize();
     }
 
     public String getPushType() {
-        return mPushType;
+        return mSettingPopupWindowView.getCheckedType();
     }
 }

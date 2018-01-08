@@ -1,6 +1,7 @@
 package com.example.hy.liveexampleandroid.Push.Camera;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -12,7 +13,6 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
@@ -25,8 +25,6 @@ import android.view.TextureView;
 import com.example.hy.liveexampleandroid.Push.PusherImp;
 import com.example.hy.liveexampleandroid.Push.Queue.QueueManager;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -42,7 +40,7 @@ public class CameraImp implements Camera ,TextureView.SurfaceTextureListener,Ima
     private CameraCaptureSession.StateCallback mCameraCaptureSessionStateCallback;
     private CaptureRequest.Builder mPreviewBuilder;
     private Size[] mSupportSize=null;
-    private Size settingSize;
+    private Size mPreviewSettingSize;
     private CameraDevice mCameraDevice;
     private TextureView mTextureView;
     private String[] mCameraList;
@@ -69,21 +67,38 @@ public class CameraImp implements Camera ,TextureView.SurfaceTextureListener,Ima
         mIsProcessImage=isProcessImage;
     }
 
+    @Override
+    public void reOpen() {
+         closeCamera();
+         initialCamera();
+      //   mTextureView.setSurfaceTextureListener(this);
+    }
 
     @Override
-    public void onDestroy() {
+    public void setPreviewSize(Size previewSize) {
+            mPreviewSettingSize=previewSize;
+            reOpen();
+    }
+
+
+    @Override
+    public void closeCamera() {
         mImageReader.close();
         mCameraDevice.close();
+       // mTextureView.setSurfaceTextureListener(null);
     }
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
         initialCamera();
-        adjustTextureViewSize(width,height);
+      //  adjustTextureViewSize(width,height);
+        Log.i(TAG, "onSurfaceTextureAvailable: ");
+
     }
 
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+        Log.i(TAG, "onSurfaceTextureSizeChanged: ");
 
     }
 
@@ -94,7 +109,7 @@ public class CameraImp implements Camera ,TextureView.SurfaceTextureListener,Ima
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-
+        Log.i(TAG, "onSurfaceTextureUpdated: ");
     }
 
 
@@ -102,18 +117,18 @@ public class CameraImp implements Camera ,TextureView.SurfaceTextureListener,Ima
 
     @Override
     public void onImageAvailable(ImageReader reader) {
-        Log.i(TAG, "onImageAvailable: ");
+       // Log.i(TAG, "onImageAvailable: ");
         Image image = reader.acquireNextImage();
-        Log.i(TAG, "YUV_420_888toNV21: width=="+image.getWidth()+" height=="+image.getHeight());
+      //  Log.i(TAG, "YUV_420_888toNV21: width=="+image.getWidth()+" height=="+image.getHeight());
         if (mIsProcessImage) {
 
             if (QueueManager.getYUVSize()>=30){
                 QueueManager.pollDataFromYUVQueue();
             }
             QueueManager.addDataToYUVQueue(convertImgToYUVData(image));
-            Log.i(TAG, "onImageAvailable: planes=="+Arrays.toString(image.getPlanes()));
+    //        Log.i(TAG, "onImageAvailable: planes=="+Arrays.toString(image.getPlanes()));
 
-            Log.i(TAG, "onImageAvailable: push Image to queue");
+      //      Log.i(TAG, "onImageAvailable: push Image to queue");
         }
         image.close();
     }
@@ -170,7 +185,7 @@ public class CameraImp implements Camera ,TextureView.SurfaceTextureListener,Ima
 
     private void adjustTextureViewSize(int width,int height){
         Log.i(TAG, "onSurfaceTextureAvailable: ");
-        double scale=(double) (settingSize.getHeight())/(double) (settingSize.getWidth());
+        double scale=(double) (mPreviewSettingSize.getHeight())/(double) (mPreviewSettingSize.getWidth());
         int suitableWidth=(int)(height*scale);
         ConstraintLayout.LayoutParams layoutParams=new ConstraintLayout.LayoutParams(suitableWidth,height);
         layoutParams.topToTop= ConstraintLayout.LayoutParams.PARENT_ID;
@@ -185,18 +200,17 @@ public class CameraImp implements Camera ,TextureView.SurfaceTextureListener,Ima
         Log.i(TAG, "startPreview: ");
         mCameraDevice=camera;
         SurfaceTexture texture = mTextureView.getSurfaceTexture();
-        texture.setDefaultBufferSize(settingSize.getWidth(), settingSize.getHeight());
+        texture.setDefaultBufferSize(mPreviewSettingSize.getWidth(), mPreviewSettingSize.getHeight());
         Surface surface = new Surface(texture);
         mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
 
-        mImageReader=ImageReader.newInstance(settingSize.getWidth(), settingSize.getHeight(),
+        mImageReader=ImageReader.newInstance(mPreviewSettingSize.getWidth(), mPreviewSettingSize.getHeight(),
                 ImageFormat.YV12,1);
         //the format is wrong when using YUV420_888 ,have no idea about that
         //using YV12 is useful on my phone
         mImageReader.setOnImageAvailableListener(this,mHandler);
         mPreviewBuilder.addTarget(surface);
         mPreviewBuilder.addTarget(mImageReader.getSurface());
-
         mCameraDevice.createCaptureSession(Arrays.asList(surface,mImageReader.getSurface()),mCameraCaptureSessionStateCallback,mHandler);
     }
 
@@ -208,13 +222,14 @@ public class CameraImp implements Camera ,TextureView.SurfaceTextureListener,Ima
             mCameraList = mCameraManager.getCameraIdList();
             CameraCharacteristics cameraCharacteristics=mCameraManager.getCameraCharacteristics(mCameraList[0]);
             StreamConfigurationMap map=cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-
             assert map!=null;
             mSupportSize =map.getOutputSizes(SurfaceTexture.class);
-            settingSize = mSupportSize[0];
+            if (mPreviewSettingSize ==null)
+            mPreviewSettingSize = mSupportSize[0];
             PusherImp.supportSize=mSupportSize.clone();
             Log.i(TAG, "initialCamera: size array=="+ Arrays.toString(mSupportSize));
             mCameraManager.openCamera(mCameraList[0], mCameraDeviceStateCallback, mHandler);
+            adjustTextureViewSize(0,mTextureView.getHeight());
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }

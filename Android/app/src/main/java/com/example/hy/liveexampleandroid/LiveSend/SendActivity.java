@@ -1,11 +1,13 @@
 package com.example.hy.liveexampleandroid.LiveSend;
 
+import android.app.ProgressDialog;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.annotation.Size;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.util.Size;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,7 +30,7 @@ import com.example.hy.liveexampleandroid.View.SettingPopupWindowView;
  */
 
 public class SendActivity extends AppCompatActivity implements
-        SendView, View.OnClickListener,PopupWindow.OnDismissListener {
+        SendView, View.OnClickListener, PopupWindow.OnDismissListener {
 
     private Button mSendBtn;
     private TextureView mTextureView;
@@ -38,11 +40,10 @@ public class SendActivity extends AppCompatActivity implements
     private Size mPushSize;
     private String mPushType;
 
-
     private SendPresenter presenter;
-   // private PopupWindow mPopupWindow=null;
+    // private PopupWindow mPopupWindow=null;
 
-    private SettingPopupWindow mPopupWindow=null;
+    private SettingPopupWindow mPopupWindow = null;
     private static final String TAG = "SendActivity";
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -93,12 +94,20 @@ public class SendActivity extends AppCompatActivity implements
         if (mSendBtn.getText().toString().equals(getResources().getString(R.string.startLive))) {
             if (mPopupWindow == null) {
                 mPopupWindow = new SettingPopupWindow(this, PusherImp.supportSize);
+                mPopupWindow.setOnDismissListener(this);
+                mPreviewSize=mPopupWindow.getPreviewSize();
+                mPushSize=mPopupWindow.getPushSize();
+                mPushType=mPopupWindow.getPushType();
             }
             mPopupWindow.setOutsideTouchable(true);
             mPopupWindow.showAtLocation(this.getWindow().getDecorView(), Gravity.CENTER, 0, 0);
-        }else {
-            ToastUtil.toast(this,getResources().getString(R.string.please_stop_push),Toast.LENGTH_SHORT);
+        } else {
+            ToastUtil.toast(this, getResources().getString(R.string.please_stop_push), Toast.LENGTH_SHORT);
         }
+        Log.i(TAG, "showSettingPopWindow: previewsize==="+String.valueOf(mPopupWindow.getPreviewSize()));
+        Log.i(TAG, "showSettingPopWindow: pushSize==="+String.valueOf(mPopupWindow.getPushSize()));
+        Log.i(TAG, "showSettingPopWindow: pushType===="+String.valueOf(mPopupWindow.getPushType()));
+
     }
 
     @Override
@@ -138,6 +147,7 @@ public class SendActivity extends AppCompatActivity implements
         return mEditText.getText().toString();
     }
 
+
     @Override
     public boolean IpIsValid() {
         return IpChecker.IsIpValid(mEditText.getText().toString());
@@ -168,6 +178,17 @@ public class SendActivity extends AppCompatActivity implements
 
     @Override
     public void onDismiss() {
-
+        if (mPreviewSize != mPopupWindow.getPreviewSize()) {
+            mPreviewSize = mPopupWindow.getPreviewSize();
+            presenter.setPreviewSize(mPreviewSize);
+        }
+        if (mPushSize != mPopupWindow.getPushSize()) {
+            mPushSize = mPopupWindow.getPushSize();
+            presenter.setPushSize(mPushSize);
+        }
+        if (!mPushType.equals( mPopupWindow.getPushType())) {
+            mPushType = mPopupWindow.getPushType();
+            presenter.setPushType(mPushType);
+        }
     }
 }

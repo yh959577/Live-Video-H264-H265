@@ -13,6 +13,8 @@ public interface Camera {
 
  void initial();
  void setIsProcessImage(boolean isProcessImage);
- void onDestroy();
+ void reOpen();
+ void setPreviewSize(Size previewSize);
+ void closeCamera();
 
 }

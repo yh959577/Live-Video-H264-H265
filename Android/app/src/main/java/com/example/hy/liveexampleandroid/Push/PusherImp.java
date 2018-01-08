@@ -1,7 +1,6 @@
 package com.example.hy.liveexampleandroid.Push;
 
 import android.hardware.camera2.CameraManager;
-import android.os.Environment;
 import android.util.Size;
 import android.view.TextureView;
 
@@ -9,12 +8,7 @@ import com.example.hy.liveexampleandroid.Push.Camera.Camera;
 import com.example.hy.liveexampleandroid.Push.Camera.CameraImp;
 import com.example.hy.liveexampleandroid.Push.Encoder.Encoder;
 import com.example.hy.liveexampleandroid.Push.Encoder.EncoderImp;
-import com.example.hy.liveexampleandroid.Push.Queue.QueueManager;
 import com.example.hy.liveexampleandroid.Push.UdpSend.VideoSender;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 
 /**
  * Created by Hamik Young on 2018/1/4.
@@ -56,7 +50,22 @@ public class PusherImp implements Pusher {
     }
 
     @Override
+    public void setPreviewSize(Size previewSize) {
+           mCamera.setPreviewSize(previewSize);
+    }
+
+    @Override
+    public void setPushSize(Size pushSize) {
+
+    }
+
+    @Override
+    public void setPushType(String pushType) {
+
+    }
+
+    @Override
     public void onDestroy() {
-        mCamera.onDestroy();
+        mCamera.closeCamera();
     }
 }

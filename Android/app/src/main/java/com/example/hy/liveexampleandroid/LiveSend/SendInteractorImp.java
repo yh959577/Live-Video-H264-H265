@@ -1,6 +1,7 @@
 package com.example.hy.liveexampleandroid.LiveSend;
 
 import android.hardware.camera2.CameraManager;
+import android.util.Size;
 import android.view.TextureView;
 
 import com.example.hy.liveexampleandroid.Push.Pusher;
@@ -27,6 +28,21 @@ public class SendInteractorImp implements SendInteractor {
     @Override
     public void startPush() {
       mPusher.startPush();
+    }
+
+    @Override
+    public void setPreviewSize(Size previewSize) {
+             mPusher.setPreviewSize(previewSize);
+    }
+
+    @Override
+    public void setPushSize(Size pushSize) {
+           mPusher.setPushSize(pushSize);
+    }
+
+    @Override
+    public void setPushType(String pushType) {
+           mPusher.setPushType(pushType);
     }
 
     @Override

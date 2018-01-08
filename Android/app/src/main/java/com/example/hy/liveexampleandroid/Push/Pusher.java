@@ -10,5 +10,8 @@ public interface Pusher {
   void initial();
   void startPush();
   void stopPush();
+  void setPreviewSize(Size previewSize);
+  void setPushSize(Size pushSize);
+  void setPushType(String pushType);
   void onDestroy();
 }
