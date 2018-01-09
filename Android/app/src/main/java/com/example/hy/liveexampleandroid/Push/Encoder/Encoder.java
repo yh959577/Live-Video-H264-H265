@@ -5,6 +5,7 @@ package com.example.hy.liveexampleandroid.Push.Encoder;
  */
 
 public interface Encoder {
+    void initial();
     void startEncoder();
     void stopEncoder();
     void onDestroy();

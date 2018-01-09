@@ -11,22 +11,27 @@ public class QueueManager {
     private static ArrayBlockingQueue<byte[]> YUVQueue = new ArrayBlockingQueue(30);
     private static ArrayBlockingQueue<byte[]> FrameQueue = new ArrayBlockingQueue(30);
 
-    public static void addDataToYUVQueue(byte[] imageData)  {
+    public static void addDataToYUVQueue(byte[] imageData) {
         YUVQueue.add(imageData);
     }
-    public static int getYUVSize(){
+
+    public static int getYUVQueueSize() {
         return YUVQueue.size();
     }
 
-    public static byte[] pollDataFromYUVQueue()  {
+    public static int getFrameQueueSize() {
+        return FrameQueue.size();
+    }
+
+    public static byte[] pollDataFromYUVQueue() {
         return YUVQueue.poll();
     }
 
-    public static void addDataToFrameQueue(byte[] frameData)  {
+    public static void addDataToFrameQueue(byte[] frameData) {
         FrameQueue.add(frameData);
     }
 
-    public static byte[] pollDataFromFrameQueue(){
+    public static byte[] pollDataFromFrameQueue() {
         return FrameQueue.poll();
     }
 }

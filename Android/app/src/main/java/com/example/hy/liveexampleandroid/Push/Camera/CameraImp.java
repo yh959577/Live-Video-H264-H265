@@ -1,7 +1,6 @@
 package com.example.hy.liveexampleandroid.Push.Camera;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -122,7 +121,7 @@ public class CameraImp implements Camera ,TextureView.SurfaceTextureListener,Ima
       //  Log.i(TAG, "YUV_420_888toNV21: width=="+image.getWidth()+" height=="+image.getHeight());
         if (mIsProcessImage) {
 
-            if (QueueManager.getYUVSize()>=30){
+            if (QueueManager.getYUVQueueSize()>=30){
                 QueueManager.pollDataFromYUVQueue();
             }
             QueueManager.addDataToYUVQueue(convertImgToYUVData(image));
