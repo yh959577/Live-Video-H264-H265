@@ -15,16 +15,16 @@ public class QueueManager {
         YUVQueue.add(imageData);
     }
 
+    public static byte[] pollDataFromYUVQueue() {
+        return YUVQueue.poll();
+    }
+
     public static int getYUVQueueSize() {
         return YUVQueue.size();
     }
 
-    public static int getFrameQueueSize() {
-        return FrameQueue.size();
-    }
-
-    public static byte[] pollDataFromYUVQueue() {
-        return YUVQueue.poll();
+    public static void clearYUVQueue(){
+        YUVQueue.clear();
     }
 
     public static void addDataToFrameQueue(byte[] frameData) {
@@ -34,4 +34,13 @@ public class QueueManager {
     public static byte[] pollDataFromFrameQueue() {
         return FrameQueue.poll();
     }
+
+    public static int getFrameQueueSize() {
+        return FrameQueue.size();
+    }
+
+    public static void clearFrameQueue(){
+        FrameQueue.clear();
+    }
+
 }

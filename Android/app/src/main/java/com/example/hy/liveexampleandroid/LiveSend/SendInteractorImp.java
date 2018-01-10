@@ -1,5 +1,6 @@
 package com.example.hy.liveexampleandroid.LiveSend;
 
+import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.util.Size;
 import android.view.TextureView;
@@ -22,12 +23,20 @@ public class SendInteractorImp implements SendInteractor {
 
     @Override
     public void stopPush() {
-      mPusher.stopPush();
+        try {
+            mPusher.stopPush();
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void startPush() {
-      mPusher.startPush();
+        try {
+            mPusher.startPush();
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

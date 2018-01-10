@@ -1,5 +1,6 @@
 package com.example.hy.liveexampleandroid.Push;
 
+import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.util.Size;
 import android.view.TextureView;
@@ -38,16 +39,18 @@ public class PusherImp implements Pusher {
     }
 
     @Override
-    public void startPush() {
+    public void startPush() throws CameraAccessException {
     //    mCamera.setIsProcessImage(true);
-        mEncoder.initial(mCamera.getCameraDevice());
+        mEncoder.initial();
+        mCamera.startPush(mEncoder.getPushSize());
         mEncoder.startEncoder();
         //   mVideoSender.sendVideoData(mPushAddress);
     }
 
     @Override
-    public void stopPush() {
-        mCamera.setIsProcessImage(false);
+    public void stopPush() throws CameraAccessException {
+       // mCamera.setIsProcessImage(false);
+        mCamera.stopPush();
         mEncoder.stopEncoder();
     }
 

@@ -8,10 +8,11 @@ import android.util.Size;
  */
 
 public interface Encoder {
-    void initial(CameraDevice cameraDevice);
+    void initial();
     void startEncoder();
     void stopEncoder();
     void setPushSize(Size pushSize);
     void setPushType(String pushType);
+    Size getPushSize();
     void onDestroy();
 }

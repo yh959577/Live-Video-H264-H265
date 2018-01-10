@@ -31,7 +31,7 @@ import java.util.Collections;
  * Created by UPC on 2018/1/7.
  */
 
-public class EncoderImp implements Encoder,ImageReader.OnImageAvailableListener {
+public class EncoderImp implements Encoder {
     private static final String TAG = "EncoderImp";
     private Thread mEncodeThread;
     private String mEncodeType = null;
@@ -44,8 +44,6 @@ public class EncoderImp implements Encoder,ImageReader.OnImageAvailableListener 
     private int TIMEOUT_USEC = 12000;
     private int frame_rate = 30;
     private byte[] yuv420;
-    private CaptureRequest.Builder mPushBuilder;
-    private ImageReader mImageReader;
     private Handler mHandler;
     private CameraCaptureSession.StateCallback mCameraCaptureSessionStateCallback;
 
@@ -118,25 +116,10 @@ public class EncoderImp implements Encoder,ImageReader.OnImageAvailableListener 
             }
             mMediaCodec.stop();
             mMediaCodec.release();
-            mImageReader.close();
+
 
         });
         initialHandler();
-        mCameraCaptureSessionStateCallback=new CameraCaptureSession.StateCallback() {
-            @Override
-            public void onConfigured(@NonNull CameraCaptureSession session) {
-                try {
-                    session.setRepeatingRequest(mPushBuilder.build(), null, mHandler);
-                } catch (CameraAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onConfigureFailed(@NonNull CameraCaptureSession session) {
-
-            }
-        };
     }
 
     private void initialHandler(){
@@ -145,12 +128,7 @@ public class EncoderImp implements Encoder,ImageReader.OnImageAvailableListener 
         mHandler = new Handler(threadHandler.getLooper());
     }
     @Override
-    public void initial(CameraDevice cameraDevice) {
-        try {
-            initialImageReader(cameraDevice);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
+    public void initial() {
         initialMediaCodec();
     }
 
@@ -175,6 +153,11 @@ public class EncoderImp implements Encoder,ImageReader.OnImageAvailableListener 
     @Override
     public void setPushType(String pushType) {
         mEncodeType = pushType;
+    }
+
+    @Override
+    public Size getPushSize() {
+        return mEncodeSize;
     }
 
     @Override
@@ -206,17 +189,7 @@ public class EncoderImp implements Encoder,ImageReader.OnImageAvailableListener 
     }
 
 
-    private void initialImageReader(CameraDevice cameraDevice) throws CameraAccessException {
-        mPushBuilder=cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
-        mImageReader=ImageReader.newInstance(mEncodeSize.getWidth(),mEncodeSize.getHeight(),
-                 ImageFormat.YV12,1);
-         mImageReader.setOnImageAvailableListener(this,mHandler);
-        //the format is wrong when using YUV420_888 ,have no idea about that
-        //using YV12 is useful on my phone
-        mPushBuilder.addTarget(mImageReader.getSurface());
-        cameraDevice.createCaptureSession(Collections.singletonList(mImageReader.getSurface()),mCameraCaptureSessionStateCallback
-                ,mHandler);
-    }
+
 
 
     private void initialMediaCodec() {
@@ -224,13 +197,11 @@ public class EncoderImp implements Encoder,ImageReader.OnImageAvailableListener 
             mEncodeType = MediaFormat.MIMETYPE_VIDEO_AVC;
         if (mEncodeSize == null)
             mEncodeSize = PusherImp.supportSize[0];
-
         mMediaFormat = MediaFormat.createVideoFormat(mEncodeType, mEncodeSize.getWidth(), mEncodeSize.getHeight());
         mMediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar);
         mMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, mEncodeSize.getWidth() * mEncodeSize.getHeight() * 5);
         mMediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frame_rate);
         mMediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
-
         try {
             mMediaCodec = MediaCodec.createEncoderByType(mEncodeType);
         } catch (IOException e) {
@@ -240,41 +211,5 @@ public class EncoderImp implements Encoder,ImageReader.OnImageAvailableListener 
         }
         mMediaCodec.configure(mMediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         //   mMediaCodec.start();
-    }
-
-    @Override
-    public void onImageAvailable(ImageReader reader) {
-        Image image = reader.acquireNextImage();
-        //  Log.i(TAG, "YUV_420_888toNV21: width=="+image.getWidth()+" height=="+image.getHeight());
-
-
-        if (QueueManager.getYUVQueueSize() >= 30) {
-            QueueManager.pollDataFromYUVQueue();
-        }
-        QueueManager.addDataToYUVQueue(convertImgToYUVData(image));
-        //        Log.i(TAG, "onImageAvailable: planes=="+Arrays.toString(image.getPlanes()));
-
-        //      Log.i(TAG, "onImageAvailable: push Image to queue");
-
-        image.close();
-    }
-    private byte[] convertImgToYUVData(Image image) {
-
-        ByteBuffer yBuffer = image.getPlanes()[0].getBuffer(); //Y
-        ByteBuffer uBuffer = image.getPlanes()[1].getBuffer(); //U
-        ByteBuffer vBuffer = image.getPlanes()[2].getBuffer(); //V
-
-        int ySize = yBuffer.remaining();
-        int uSize = uBuffer.remaining();
-        int vSize = vBuffer.remaining();
-        Log.i(TAG, "saveYuv: Ysize===" + ySize + " Usize===" + uSize + " Vsize===" + vSize);
-
-        byte[] data = new byte[ySize + uSize + vSize];
-
-        yBuffer.get(data, 0, ySize);
-        uBuffer.get(data, ySize, uSize);
-        vBuffer.get(data, ySize + uSize, vSize);
-
-        return data;
     }
 }

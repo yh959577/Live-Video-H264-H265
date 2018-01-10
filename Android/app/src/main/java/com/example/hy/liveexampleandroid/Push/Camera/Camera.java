@@ -1,5 +1,6 @@
 package com.example.hy.liveexampleandroid.Push.Camera;
 
+import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraDevice;
 import android.os.Handler;
@@ -15,7 +16,8 @@ public interface Camera {
  void setIsProcessImage(boolean isProcessImage);
  void switchCamera();
  void setPreviewSize(Size previewSize);
- CameraDevice getCameraDevice();
+ void startPush(Size encoderSize) throws CameraAccessException;
+ void stopPush() throws CameraAccessException;
  void closeCamera();
 
 }
