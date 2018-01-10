@@ -17,5 +17,6 @@ public interface SendInteractor {
     void setPreviewSize(Size previewSize);
     void setPushSize(Size pushSize);
     void setPushType(String pushType);
+    void switchCamera();
     void onDestroy();
 }

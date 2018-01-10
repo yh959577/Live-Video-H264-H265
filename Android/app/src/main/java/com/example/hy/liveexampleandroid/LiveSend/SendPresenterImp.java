@@ -51,7 +51,8 @@ public class SendPresenterImp implements SendPresenter {
 
     @Override
     public void switchCamera() {
-
+        mSendInteractor.switchCamera();
+        mSendView.resetPopupWindow();
     }
 
     @Override

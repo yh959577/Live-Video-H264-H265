@@ -17,7 +17,7 @@ public class SendInteractorImp implements SendInteractor {
     @Override
     public void initialPusher(TextureView textureView, CameraManager cameraManager,String pushAddress) {
       mPusher=PusherImp.buildPusher(textureView, cameraManager,pushAddress);
-      mPusher.initial();
+   //   mPusher.initial();
     }
 
     @Override
@@ -43,6 +43,11 @@ public class SendInteractorImp implements SendInteractor {
     @Override
     public void setPushType(String pushType) {
            mPusher.setPushType(pushType);
+    }
+
+    @Override
+    public void switchCamera() {
+        mPusher.switchCamera();
     }
 
     @Override

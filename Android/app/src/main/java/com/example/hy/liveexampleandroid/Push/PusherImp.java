@@ -29,19 +29,18 @@ public class PusherImp implements Pusher {
         mCamera = new CameraImp(textureView, cameraManager);
         mPushAddress = pushAddress;
         mEncoder = new EncoderImp();
+        initial();
     }
 
     @Override
     public void initial() {
         mCamera.initial();
-
-
     }
 
     @Override
     public void startPush() {
-        mCamera.setIsProcessImage(true);
-        mEncoder.initial();
+    //    mCamera.setIsProcessImage(true);
+        mEncoder.initial(mCamera.getCameraDevice());
         mEncoder.startEncoder();
         //   mVideoSender.sendVideoData(mPushAddress);
     }
@@ -59,12 +58,17 @@ public class PusherImp implements Pusher {
 
     @Override
     public void setPushSize(Size pushSize) {
-
+           mEncoder.setPushSize(pushSize);
     }
 
     @Override
     public void setPushType(String pushType) {
+          mEncoder.setPushType(pushType);
+    }
 
+    @Override
+    public void switchCamera() {
+        mCamera.switchCamera();
     }
 
     @Override

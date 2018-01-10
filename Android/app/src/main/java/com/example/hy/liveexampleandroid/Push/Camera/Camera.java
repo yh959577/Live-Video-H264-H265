@@ -13,8 +13,9 @@ public interface Camera {
 
  void initial();
  void setIsProcessImage(boolean isProcessImage);
- void reOpen();
+ void switchCamera();
  void setPreviewSize(Size previewSize);
+ CameraDevice getCameraDevice();
  void closeCamera();
 
 }
