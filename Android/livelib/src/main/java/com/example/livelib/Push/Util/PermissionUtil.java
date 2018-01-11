@@ -1,6 +1,5 @@
-package com.example.hy.liveexampleandroid.Util;
+package com.example.livelib.Push.Util;
 
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -28,7 +27,7 @@ public class PermissionUtil {
       }
   }
 
-  public static boolean isPermmisonGrant(AppCompatActivity activity,@NonNull String permission){
+  public static boolean isPermissionGrant(AppCompatActivity activity, @NonNull String permission){
       return ContextCompat.checkSelfPermission(activity,permission)==PackageManager.PERMISSION_GRANTED;
   }
 }

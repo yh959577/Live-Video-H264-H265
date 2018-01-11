@@ -20,20 +20,19 @@ public class SendPresenterImp implements SendPresenter {
 
     @Override
     public int initialPusher() {
-        mSendInteractor.initialPusher(mSendView.supplyTextureView(),mSendView.supplyCameraManager(),
-                mSendView.getPushIp());
+        mSendInteractor.initialPusher(mSendView.supplyTextureView(),mSendView.supplyCameraManager());
         return 0;
     }
 
     @Override
-    public int startPushVideo(){
+    public int startPushVideo(String pushAddress){
         if (mSendView.IpIsEmpty())
             mSendView.IpEmptyError();
         else if (!mSendView.IpIsValid())
             mSendView.IpInvalidError();
         else {
             mSendView.btnTextChangeToStop();
-            mSendInteractor.startPush();
+            mSendInteractor.startPush(pushAddress);
         }
         return 0;
     }

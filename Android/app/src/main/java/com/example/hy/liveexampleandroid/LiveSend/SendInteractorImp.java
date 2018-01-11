@@ -5,8 +5,11 @@ import android.hardware.camera2.CameraManager;
 import android.util.Size;
 import android.view.TextureView;
 
-import com.example.hy.liveexampleandroid.Push.Pusher;
-import com.example.hy.liveexampleandroid.Push.PusherImp;
+import com.example.livelib.Push.Pusher;
+import com.example.livelib.Push.PusherImp;
+
+import java.net.UnknownHostException;
+
 
 /**
  * Created by Hamik Young on 2018/1/4.
@@ -16,9 +19,10 @@ public class SendInteractorImp implements SendInteractor {
     private Pusher mPusher;
 
     @Override
-    public void initialPusher(TextureView textureView, CameraManager cameraManager,String pushAddress) {
-      mPusher=PusherImp.buildPusher(textureView, cameraManager,pushAddress);
-   //   mPusher.initial();
+    public void initialPusher(TextureView textureView, CameraManager cameraManager) {
+            mPusher= PusherImp.buildPusher(textureView, cameraManager);
+
+        //   mPusher.initial();
     }
 
     @Override
@@ -31,10 +35,10 @@ public class SendInteractorImp implements SendInteractor {
     }
 
     @Override
-    public void startPush() {
+    public void startPush(String pushAddress) {
         try {
-            mPusher.startPush();
-        } catch (CameraAccessException e) {
+            mPusher.startPush(pushAddress);
+        } catch (CameraAccessException | UnknownHostException e) {
             e.printStackTrace();
         }
     }

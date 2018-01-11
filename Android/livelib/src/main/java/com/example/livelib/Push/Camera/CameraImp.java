@@ -1,4 +1,4 @@
-package com.example.hy.liveexampleandroid.Push.Camera;
+package com.example.livelib.Push.Camera;
 
 import android.annotation.SuppressLint;
 import android.graphics.ImageFormat;
@@ -12,22 +12,18 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
-import android.media.MediaCodec;
-import android.media.MediaCodecInfo;
-import android.media.MediaCodecList;
-import android.media.MediaFormat;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.util.Log;
-import android.util.Range;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
 
-import com.example.hy.liveexampleandroid.Push.PusherImp;
-import com.example.hy.liveexampleandroid.Push.Queue.QueueManager;
+
+import com.example.livelib.Push.PusherImp;
+import com.example.livelib.Push.Queue.QueueManager;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -240,6 +236,7 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
         Log.i(TAG, "onSurfaceTextureAvailable: ");
         double scale = (double) (mPreviewSettingSize.getHeight()) / (double) (mPreviewSettingSize.getWidth());
         int suitableWidth = (int) (height * scale);
+
         ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(suitableWidth, height);
         layoutParams.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
         layoutParams.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;

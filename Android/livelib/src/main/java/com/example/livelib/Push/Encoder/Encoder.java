@@ -1,6 +1,5 @@
-package com.example.hy.liveexampleandroid.Push.Encoder;
+package com.example.livelib.Push.Encoder;
 
-import android.hardware.camera2.CameraDevice;
 import android.util.Size;
 
 /**

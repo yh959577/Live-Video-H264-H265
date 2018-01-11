@@ -16,13 +16,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.Toast;
-
-import com.example.hy.liveexampleandroid.Push.Encoder.EncoderChecker;
-import com.example.hy.liveexampleandroid.Push.PusherImp;
 import com.example.hy.liveexampleandroid.R;
-import com.example.hy.liveexampleandroid.Util.IpChecker;
+
 import com.example.hy.liveexampleandroid.Util.ToastUtil;
 import com.example.hy.liveexampleandroid.View.SettingPopupWindow;
+import com.example.livelib.Push.Encoder.EncoderChecker;
+import com.example.livelib.Push.PusherImp;
+import com.example.livelib.Push.Util.IpChecker;
 
 /**
  * Created by Hamik Young on 2017/12/29.
@@ -167,12 +167,13 @@ public class SendActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View v) {
+
         switch (v.getId()) {
             case R.id.send_live_btn:
                 if (mSendBtn.getText().toString().equals(getResources().getString(R.string.startLive))) {
                     checkPushResolution();
                     if (EncoderChecker.isSupportEncoderType(mPushType))
-                        presenter.startPushVideo();
+                        presenter.startPushVideo(mEditText.getText().toString());
                     else {
                         String toastString="";
                         if (mPushType.equals(MediaFormat.MIMETYPE_VIDEO_HEVC))

@@ -1,9 +1,6 @@
-package com.example.hy.liveexampleandroid.Push.Camera;
+package com.example.livelib.Push.Camera;
 
 import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraDevice;
-import android.os.Handler;
 import android.util.Size;
 
 /**

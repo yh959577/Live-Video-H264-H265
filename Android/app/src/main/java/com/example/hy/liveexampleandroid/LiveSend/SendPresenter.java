@@ -8,7 +8,7 @@ import android.util.Size;
 
 public interface SendPresenter {
     int initialPusher();
-    int startPushVideo();
+    int startPushVideo(String pushAddress);
     void stopPushVideo();
     void takePic();
     void switchCamera();

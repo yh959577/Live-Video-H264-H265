@@ -1,7 +1,6 @@
-package com.example.hy.liveexampleandroid.Push.Queue;
+package com.example.livelib.Push.Queue;
 
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Hamik Young on 2018/1/4.

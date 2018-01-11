@@ -1,31 +1,23 @@
-package com.example.hy.liveexampleandroid.Push.Encoder;
+package com.example.livelib.Push.Encoder;
 
-import android.graphics.ImageFormat;
-import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CaptureRequest;
-import android.media.Image;
-import android.media.ImageReader;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.NonNull;
-import android.util.Log;
 import android.util.Size;
 
-import com.example.hy.liveexampleandroid.Push.PusherImp;
-import com.example.hy.liveexampleandroid.Push.Queue.QueueManager;
+
+import com.example.livelib.Push.PusherImp;
+import com.example.livelib.Push.Queue.QueueManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Collections;
 
 /**
  * Created by UPC on 2018/1/7.
@@ -95,12 +87,19 @@ public class EncoderImp implements Encoder {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+                            if (QueueManager.getFrameQueueSize()>=30)
+                                QueueManager.pollDataFromFrameQueue();
+                             QueueManager.addDataToFrameQueue(keyFrame);
+
                         } else {
                             try {
                                 fileOutputStream.write(outData, 0, outData.length);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+                            if (QueueManager.getFrameQueueSize()>=30)
+                                QueueManager.pollDataFromFrameQueue();
+                            QueueManager.addDataToFrameQueue(outData);
 
                         }
                         mMediaCodec.releaseOutputBuffer(outPutBufferIndex, false);

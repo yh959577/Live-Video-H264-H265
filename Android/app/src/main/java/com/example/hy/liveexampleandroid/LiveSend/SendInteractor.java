@@ -11,9 +11,9 @@ import android.view.TextureView;
  */
 
 public interface SendInteractor {
-    void initialPusher(TextureView textureView, CameraManager cameraManager,String pushAddress);
+    void initialPusher(TextureView textureView, CameraManager cameraManager);
     void stopPush();
-    void startPush();
+    void startPush(String pushAddress);
     void setPreviewSize(Size previewSize);
     void setPushSize(Size pushSize);
     void setPushType(String pushType);
