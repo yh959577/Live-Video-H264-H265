@@ -1,6 +1,7 @@
 package com.example.hy.liveexampleandroid.LiveSend;
 
 import android.hardware.camera2.CameraManager;
+import android.media.MediaFormat;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import com.example.hy.liveexampleandroid.Push.Encoder.EncoderChecker;
 import com.example.hy.liveexampleandroid.Push.PusherImp;
 import com.example.hy.liveexampleandroid.R;
 import com.example.hy.liveexampleandroid.Util.IpChecker;
@@ -169,8 +171,18 @@ public class SendActivity extends AppCompatActivity implements
             case R.id.send_live_btn:
                 if (mSendBtn.getText().toString().equals(getResources().getString(R.string.startLive))) {
                     checkPushResolution();
-                    presenter.startPushVideo();
-                } else {
+                    if (EncoderChecker.isSupportEncoderType(mPushType))
+                        presenter.startPushVideo();
+                    else {
+                        String toastString="";
+                        if (mPushType.equals(MediaFormat.MIMETYPE_VIDEO_HEVC))
+                             toastString = "  H265";
+                        else toastString=" H264";
+                        ToastUtil.toast(this,
+                                getResources().getString(R.string.not_support_encode_type) + toastString,
+                                Toast.LENGTH_SHORT);
+                    }
+                    } else {
                     presenter.stopPushVideo();
                 }
                 break;
@@ -189,7 +201,7 @@ public class SendActivity extends AppCompatActivity implements
             presenter.setPreviewSize(mPreviewSize);
         }
     }
-    private void checkPushResolution(){
+    private void checkPushResolution() {
         if (mPopupWindow == null) {
             mPopupWindow = new SettingPopupWindow(this, PusherImp.supportSize);
             mPopupWindow.setOnDismissListener(this);
@@ -198,7 +210,7 @@ public class SendActivity extends AppCompatActivity implements
             mPushSize = mPopupWindow.getPushSize();
             presenter.setPushSize(mPushSize);
         }
-        if (!mPushType.equals( mPopupWindow.getPushType())) {
+        if (!mPushType.equals(mPopupWindow.getPushType())) {
             mPushType = mPopupWindow.getPushType();
             presenter.setPushType(mPushType);
         }

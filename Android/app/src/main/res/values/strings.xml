@@ -20,4 +20,5 @@
     <string name="push_resolution">PushResolution</string>
     <string name="encode_type">EncodeType</string>
     <string name="please_stop_push">Please Stop Push First</string>
+    <string name="not_support_encode_type">Your device is not support </string>
 </resources>

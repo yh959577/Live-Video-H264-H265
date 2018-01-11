@@ -141,8 +141,6 @@ public class EncoderImp implements Encoder {
     @Override
     public void stopEncoder() {
         isRuning = false;
-        // mMediaCodec.stop();
-        // mMediaCodec.release();
     }
 
     @Override
