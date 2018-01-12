@@ -7,8 +7,10 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 
 public class QueueManager {
-    private static ArrayBlockingQueue<byte[]> YUVQueue = new ArrayBlockingQueue(30);
-    private static ArrayBlockingQueue<byte[]> FrameQueue = new ArrayBlockingQueue(30);
+    private static  int YUVQueueSize=150;
+    private static  int FrameQueueSize=300;
+    private static ArrayBlockingQueue<byte[]> YUVQueue = new ArrayBlockingQueue(YUVQueueSize);
+    private static ArrayBlockingQueue<byte[]> FrameQueue = new ArrayBlockingQueue(FrameQueueSize);
 
     public static void addDataToYUVQueue(byte[] imageData) {
         YUVQueue.add(imageData);
@@ -22,9 +24,14 @@ public class QueueManager {
         return YUVQueue.size();
     }
 
+    public static int getYUVQueueCapacity(){
+        return YUVQueueSize;
+    }
+
     public static void clearYUVQueue(){
         YUVQueue.clear();
     }
+
 
     public static void addDataToFrameQueue(byte[] frameData) {
         FrameQueue.add(frameData);
@@ -38,6 +45,9 @@ public class QueueManager {
         return FrameQueue.size();
     }
 
+    public static int getFrameQueueCapacity(){
+        return FrameQueueSize;
+    }
     public static void clearFrameQueue(){
         FrameQueue.clear();
     }

@@ -7,6 +7,7 @@ import android.media.MediaFormat;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
 import android.util.Size;
 
 
@@ -87,8 +88,12 @@ public class EncoderImp implements Encoder {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            if (QueueManager.getFrameQueueSize()>=30)
+                            Log.i(TAG, "EncoderImp: size===="+QueueManager.getFrameQueueSize());
+                            if (QueueManager.getFrameQueueSize()>=QueueManager.getFrameQueueCapacity()){
+                                Log.i(TAG, "EncoderImp: size>30 size==="+QueueManager.getFrameQueueSize());
                                 QueueManager.pollDataFromFrameQueue();
+                            }
+
                              QueueManager.addDataToFrameQueue(keyFrame);
 
                         } else {
@@ -97,8 +102,11 @@ public class EncoderImp implements Encoder {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            if (QueueManager.getFrameQueueSize()>=30)
+                            Log.i(TAG, "EncoderImp: size===="+QueueManager.getFrameQueueSize());
+                            if (QueueManager.getFrameQueueSize()>=QueueManager.getFrameQueueCapacity()) {
                                 QueueManager.pollDataFromFrameQueue();
+                                Log.i(TAG, "EncoderImp: size>30");
+                            }
                             QueueManager.addDataToFrameQueue(outData);
 
                         }

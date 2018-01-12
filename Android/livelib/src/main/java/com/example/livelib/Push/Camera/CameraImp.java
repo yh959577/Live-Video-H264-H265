@@ -166,7 +166,7 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
         //startPreview();
         mIsProcessImage = false;
         QueueManager.clearYUVQueue();
-        QueueManager.clearFrameQueue();
+      //  QueueManager.clearFrameQueue();
         startPreview();
     }
 
@@ -186,7 +186,7 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
             mIsPreviewSizeChanged = false;
         }
         QueueManager.clearYUVQueue();
-        QueueManager.clearFrameQueue();
+     //   QueueManager.clearFrameQueue();
         // mTextureView.setSurfaceTextureListener(null);
     }
 
@@ -221,7 +221,7 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
         // Log.i(TAG, "onImageAvailable: ");
         Image image = reader.acquireNextImage();
          //   Log.i(TAG, "YUV_420_888toNV21: width==" + image.getWidth() + " height==" + image.getHeight());
-            if (QueueManager.getYUVQueueSize() >= 30) {
+            if (QueueManager.getYUVQueueSize() >= QueueManager.getYUVQueueCapacity()) {
                 QueueManager.pollDataFromYUVQueue();
             }
             QueueManager.addDataToYUVQueue(convertImgToYUVData(image));
