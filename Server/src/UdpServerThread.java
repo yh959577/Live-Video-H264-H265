@@ -31,13 +31,12 @@ public class UdpServerThread extends Thread {
             }
             mSendData=new byte[mReceivePacket.getLength()];
             System.arraycopy(mReceivePacket.getData(),0,mSendData,0,mSendData.length);
-             if (mSendPort==0&&mSendInetAddress==null){
-                 if (TcpServerThread.IsReceiveRequest()) {
-                     mSendPort=TcpServerThread.getRequestPort();
-                     mSendInetAddress=TcpServerThread.getRequestInetAddress();
-                 }
+            if (ClientList.getClientSize()>0){
+                for (int i = 0; i <ClientList.getClientSize() ; i++) {
+                    new UdpSendThread().start();
+                }
+                }
 
-             }else sendData();
         }
     }
     private void initialReceive(){
