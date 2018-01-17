@@ -6,19 +6,15 @@ import java.net.SocketException;
 
 public class UdpServerThread extends Thread {
     DatagramSocket mReceiveSocket;
-    DatagramSocket mSendSocket;
     DatagramPacket mReceivePacket;
-    DatagramPacket mSendPacket;
-    InetAddress mSendInetAddress=null;
-    int mReceivePort=8612;
-    int mSendPort=0;
+    int mReceivePort = 8612;
     byte[] mRecData;
     byte[] mSendData;
 
     UdpServerThread() {
 
-
     }
+
     @Override
     public void run() {
         //super.run();
@@ -26,37 +22,29 @@ public class UdpServerThread extends Thread {
         while (true){
             try {
                 mReceiveSocket.receive(mReceivePacket);
+                System.out.println("receive data len=="+mReceivePacket.getLength());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            mSendData=new byte[mReceivePacket.getLength()];
-            System.arraycopy(mReceivePacket.getData(),0,mSendData,0,mSendData.length);
-            if (ClientList.getClientSize()>0){
-                for (int i = 0; i <ClientList.getClientSize() ; i++) {
-                    new UdpSendThread().start();
+            mSendData = new byte[mReceivePacket.getLength()];
+            System.arraycopy(mReceivePacket.getData(), 0, mSendData, 0, mSendData.length);
+            if (ClientList.getClientSize() > 0) {
+                for (int i = 0; i < ClientList.getClientSize(); i++) {
+                    new UdpSendThread(mSendData,ClientList.getClientInetAddress(i),ClientList.getClientPort(i)).start();
                 }
-                }
+            }
 
         }
     }
-    private void initialReceive(){
-        mRecData=new byte[400];
-        mReceivePacket=new DatagramPacket(mRecData,0,mRecData.length);
+
+    private void initialReceive() {
+        mRecData = new byte[400];
+        mReceivePacket = new DatagramPacket(mRecData, 0, mRecData.length);
         try {
-            mReceiveSocket=new DatagramSocket(mReceivePort);
-            mSendSocket=new DatagramSocket();
+            mReceiveSocket = new DatagramSocket(mReceivePort);
         } catch (SocketException e) {
             e.printStackTrace();
         }
 
     }
-
-    private void sendData(){
-        try {
-            mSendSocket.send(new DatagramPacket(mSendData,mSendData.length,mSendInetAddress,mSendPort));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 }

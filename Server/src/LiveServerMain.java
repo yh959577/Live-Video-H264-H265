@@ -4,7 +4,10 @@ public class LiveServerMain {
 
     public static void main(String[] args) {
         try {
-            LiveServer mLiveServer=new LiveServer();
+            TcpServerThread tcpServer=new TcpServerThread();
+            tcpServer.start();
+            UdpServerThread  udpServerThread=new UdpServerThread();
+            udpServerThread.start();
         } catch (IOException e) {
             e.printStackTrace();
         }

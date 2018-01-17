@@ -30,5 +30,9 @@ private static List<Socket> mClientSockets=new ArrayList<>();
      return mClientSockets.size();
  }
 
+ public static int getClientPort(int i){
+     return mClientSockets.get(i).getPort();
+ }
+
 
 }

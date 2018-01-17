@@ -3,20 +3,22 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class LiveServer {
+public class TcpServerThread extends Thread {
   private ServerSocket mServerSocket;
-  private int mPort=8613;
+  private int mPort=8612;
 
- LiveServer() throws IOException {
-     listen(mPort);
+ TcpServerThread() throws IOException {
+    // listen(mPort);
  }
 
  private void listen(int port) throws IOException {
      mServerSocket=new ServerSocket(port);
      while (true){
        Socket client= mServerSocket.accept();
-    if (!checkInetAddressIsExist(client)&&checkIsValidOpenRequest(client.getInputStream()))
+    if (!checkInetAddressIsExist(client)&&checkIsValidOpenRequest(client.getInputStream())) {
         ClientList.addClientSocket(client);
+        System.out.println("receive request command!!!");
+    }
     if (checkInetAddressIsExist(client)&&checkIsValidCloseRequest(client.getInputStream()))
         for (int i = 0; i <ClientList.getClientSize() ; i++) {
             if (ClientList.getClientSocket(i).getInetAddress()==client.getInetAddress())
@@ -54,4 +56,13 @@ public class LiveServer {
      }
      return command[0]=='C'&&command[1]=='L';
  }
+
+    @Override
+    public void run() {
+        try {
+            listen(mPort);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
