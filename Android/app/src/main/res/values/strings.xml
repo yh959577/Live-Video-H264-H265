@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">LiveExampleAndroid</string>
-    <string name="LivePlayer">Live Play</string>
+    <string name="LivePlay">Live Play</string>
+    <string name="LiveStop">Live Stop</string>
     <string name="LiveSend">Live Send</string>
     <string name="TakePic">Take Pic</string>
     <string name="startLive">Start Live</string>

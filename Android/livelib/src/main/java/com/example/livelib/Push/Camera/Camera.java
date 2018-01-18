@@ -10,7 +10,7 @@ import android.util.Size;
 public interface Camera {
 
  void initial();
- void setIsProcessImage(boolean isProcessImage);
+
  void switchCamera();
  void setPreviewSize(Size previewSize);
  void startPush(Size encoderSize) throws CameraAccessException;

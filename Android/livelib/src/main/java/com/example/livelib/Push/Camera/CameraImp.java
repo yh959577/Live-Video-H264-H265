@@ -51,8 +51,6 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
     private static String TAG = "CameraImp";
     private CameraManager mCameraManager;
     private ImageReader mImageReader;
-    private boolean mIsProcessImage = false;
-    private SurfaceTexture mTexture;
     private boolean mIsPreviewSizeChanged = false;
     private static final int CameraBackIndex = 0;
     private static final int CameraFrontIndex = 1;
@@ -84,11 +82,6 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
     public void initial() {
         initialHandler();
         mTextureView.setSurfaceTextureListener(this);
-    }
-
-    @Override
-    public void setIsProcessImage(boolean isProcessImage) {
-        mIsProcessImage = isProcessImage;
     }
 
     @Override
@@ -163,10 +156,7 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
 
     @Override
     public void stopPush() throws CameraAccessException {
-        //startPreview();
-        mIsProcessImage = false;
         QueueManager.clearYUVQueue();
-      //  QueueManager.clearFrameQueue();
         startPreview();
     }
 
@@ -179,15 +169,14 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
 
     @Override
     public void closeCamera() {
-        //  mImageReader.close();
+
         if (mCameraDevice != null) {
             mCameraDevice.close();
             mPreviewSettingSize = null;
             mIsPreviewSizeChanged = false;
         }
         QueueManager.clearYUVQueue();
-     //   QueueManager.clearFrameQueue();
-        // mTextureView.setSurfaceTextureListener(null);
+
     }
 
     @Override
@@ -252,20 +241,11 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
             return;
         }
         closePreviewSession();
-      //  if (mTexture == null)
-        SurfaceTexture    texture = mTextureView.getSurfaceTexture();
-     //   if (mPreviewBuilder == null)
-            mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-
+        SurfaceTexture texture = mTextureView.getSurfaceTexture();
+        mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
         texture.setDefaultBufferSize(mPreviewSettingSize.getWidth(), mPreviewSettingSize.getHeight());
         Surface surface = new Surface(texture);
-        //   mImageReader=ImageReader.newInstance(mPreviewSettingSize.getWidth(), mPreviewSettingSize.getHeight(),
-        //          ImageFormat.YV12,1);
-        //the format is wrong when using YUV420_888 ,have no idea about that
-        //using YV12 is useful on my phone
-        //    mImageReader.setOnImageAvailableListener(this,mPreviewHandler);
         mPreviewBuilder.addTarget(surface);
-        //    mPreviewBuilder.addTarget(mImageReader.getSurface());
         mCameraDevice.createCaptureSession(Collections.singletonList(surface), new CameraCaptureSession.StateCallback() {
             @Override
             public void onConfigured(@NonNull CameraCaptureSession session) {
@@ -321,7 +301,6 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
                 }
             }, mPreviewHandler);
             mCameraIndex = cameraIndex;
-            //     adjustTextureViewSize(0,mTextureView.getHeight());
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
