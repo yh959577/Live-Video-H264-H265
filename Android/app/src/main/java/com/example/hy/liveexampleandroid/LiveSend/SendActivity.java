@@ -52,7 +52,7 @@ public class SendActivity extends AppCompatActivity implements
         mTextureView = findViewById(R.id.video_texture);
         mSendBtn.setOnClickListener(this);
         findViewById(R.id.take_pic_btn).setOnClickListener(this);
-        mEditText.setText("192.168.2.113:8011");
+        mEditText.setText("45.63.120.218:8612");
         presenter = new SendPresenterImp(this, new SendInteractorImp());
         presenter.initialPusher();
     }
@@ -83,11 +83,6 @@ public class SendActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void toastMessage(String message) {
-        ToastUtil.toast(this, message, Toast.LENGTH_SHORT);
-    }
-
-    @Override
     public void showSettingPopWindow() {
         if (mSendBtn.getText().toString().equals(getResources().getString(R.string.startLive))) {
             if (mPopupWindow == null) {
@@ -109,12 +104,12 @@ public class SendActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void IpEmptyError() {
+    public void showIpEmptyError() {
         mEditText.setError(getString(R.string.Ip_Empty_Error));
     }
 
     @Override
-    public void IpInvalidError() {
+    public void showIpInvalidError() {
         mEditText.setError(getString(R.string.Ip_Error));
     }
 
@@ -138,11 +133,6 @@ public class SendActivity extends AppCompatActivity implements
     @Override
     public CameraManager supplyCameraManager() {
         return (CameraManager) getSystemService(CAMERA_SERVICE);
-    }
-
-    @Override
-    public String getPushIp() {
-        return mEditText.getText().toString();
     }
 
     @Override

@@ -9,15 +9,13 @@ import android.view.TextureView;
  */
 
 public interface SendView {
-    void toastMessage(String message);
     void showSettingPopWindow();
-    void IpEmptyError();
-    void IpInvalidError();
+    void showIpEmptyError();
+    void showIpInvalidError();
     void btnTextChangeToStart();
     void btnTextChangeToStop();
     TextureView supplyTextureView();
     CameraManager supplyCameraManager();
-    String getPushIp();
     void resetPopupWindow();
     boolean IpIsValid();
     boolean IpIsEmpty();

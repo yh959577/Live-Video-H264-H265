@@ -53,6 +53,7 @@ public class PusherImp implements Pusher {
     @Override
     public void startPush(String pushAddress) throws CameraAccessException, UnknownHostException {
         //    mCamera.setIsProcessImage(true);
+
         mEncoder.initial();
         mCamera.startPush(mEncoder.getPushSize());
         mEncoder.startEncoder();

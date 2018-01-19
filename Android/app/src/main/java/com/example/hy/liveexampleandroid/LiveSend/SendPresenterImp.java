@@ -27,9 +27,9 @@ public class SendPresenterImp implements SendPresenter {
     @Override
     public int startPushVideo(String pushAddress){
         if (mSendView.IpIsEmpty())
-            mSendView.IpEmptyError();
+            mSendView.showIpEmptyError();
         else if (!mSendView.IpIsValid())
-            mSendView.IpInvalidError();
+            mSendView.showIpInvalidError();
         else {
             mSendView.btnTextChangeToStop();
             mSendInteractor.startPush(pushAddress);
