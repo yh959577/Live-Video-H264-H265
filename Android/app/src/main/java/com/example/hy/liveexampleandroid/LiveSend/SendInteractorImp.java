@@ -21,7 +21,6 @@ public class SendInteractorImp implements SendInteractor {
     @Override
     public void initialPusher(TextureView textureView, CameraManager cameraManager) {
             mPusher= PusherImp.buildPusher(textureView, cameraManager);
-
         //   mPusher.initial();
     }
 

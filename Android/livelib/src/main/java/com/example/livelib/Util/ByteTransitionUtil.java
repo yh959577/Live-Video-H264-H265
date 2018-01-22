@@ -1,4 +1,4 @@
-package com.example.livelib.Push.Util;
+package com.example.livelib.Util;
 
 import java.nio.ByteBuffer;
 
@@ -18,11 +18,11 @@ public class ByteTransitionUtil {
         };
     }
 
-    public static int byteToInt(byte[] b) {
-        return b[3] & 0xFF |
-                (b[2] & 0xFF) << 8 |
-                (b[1] & 0xFF) << 16 |
-                (b[0] & 0xFF) << 24;
+    public static int byteToInt(byte...bytes) {
+        return bytes[3] & 0xFF |
+                (bytes[2] & 0xFF) << 8 |
+                (bytes[1] & 0xFF) << 16 |
+                (bytes[0] & 0xFF) << 24;
     }
 
 
@@ -32,7 +32,7 @@ public class ByteTransitionUtil {
         return buffer.array();
     }
 
-    public static long bytesToLong(byte[] bytes) {
+    public static long bytesToLong(byte... bytes) {
         buffer.put(bytes, 0, bytes.length);
         buffer.flip();//need flip
         return buffer.getLong();

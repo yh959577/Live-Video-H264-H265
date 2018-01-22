@@ -2,6 +2,8 @@ package com.example.hy.liveexampleandroid.LiveSend;
 
 import android.util.Size;
 
+import com.example.livelib.Util.IpChecker;
+
 /**
  * Created by Hamik Young on 2018/1/2.
  */
@@ -26,9 +28,9 @@ public class SendPresenterImp implements SendPresenter {
 
     @Override
     public int startPushVideo(String pushAddress){
-        if (mSendView.IpIsEmpty())
+        if (IpChecker.IsIpEmpty(pushAddress))
             mSendView.showIpEmptyError();
-        else if (!mSendView.IpIsValid())
+        else if (!IpChecker.IsIpValid(pushAddress))
             mSendView.showIpInvalidError();
         else {
             mSendView.btnTextChangeToStop();

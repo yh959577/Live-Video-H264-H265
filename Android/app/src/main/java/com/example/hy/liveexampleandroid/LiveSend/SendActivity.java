@@ -22,7 +22,7 @@ import com.example.hy.liveexampleandroid.Util.ToastUtil;
 import com.example.hy.liveexampleandroid.View.SettingPopupWindow;
 import com.example.livelib.Push.Encoder.EncoderChecker;
 import com.example.livelib.Push.PusherImp;
-import com.example.livelib.Push.Util.IpChecker;
+import com.example.livelib.Util.IpChecker;
 
 /**
  * Created by Hamik Young on 2017/12/29.
@@ -144,16 +144,6 @@ public class SendActivity extends AppCompatActivity implements
         mPushType=mPopupWindow.getPushType();
     }
 
-
-    @Override
-    public boolean IpIsValid() {
-        return IpChecker.IsIpValid(mEditText.getText().toString());
-    }
-
-    @Override
-    public boolean IpIsEmpty() {
-        return IpChecker.IsIpEmpty(mEditText.getText().toString());
-    }
 
     @Override
     public void onClick(View v) {

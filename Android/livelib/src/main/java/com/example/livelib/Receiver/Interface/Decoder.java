@@ -5,4 +5,10 @@ package com.example.livelib.Receiver.Interface;
  */
 
 public interface Decoder {
+
+    void startDecode();
+
+    void stopDecode();
+
+
 }

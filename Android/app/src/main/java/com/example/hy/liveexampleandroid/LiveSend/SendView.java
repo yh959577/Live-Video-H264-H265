@@ -17,6 +17,4 @@ public interface SendView {
     TextureView supplyTextureView();
     CameraManager supplyCameraManager();
     void resetPopupWindow();
-    boolean IpIsValid();
-    boolean IpIsEmpty();
 }

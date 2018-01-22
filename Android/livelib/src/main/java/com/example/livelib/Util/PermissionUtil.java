@@ -1,4 +1,4 @@
-package com.example.livelib.Push.Util;
+package com.example.livelib.Util;
 
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;

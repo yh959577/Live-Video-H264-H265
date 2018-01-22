@@ -83,6 +83,7 @@ public class EncoderImp implements Encoder {
                             byte[] keyFrame = new byte[bufferInfo.size + configureByte.length];
                             System.arraycopy(configureByte, 0, keyFrame, 0, configureByte.length);
                             System.arraycopy(outData, 0, keyFrame, configureByte.length, outData.length);
+                            Log.i(TAG, "EncoderImp: keyFrameLen===="+keyFrame.length);
                             try {
                                 fileOutputStream.write(keyFrame, 0, keyFrame.length);
                             } catch (IOException e) {
@@ -102,6 +103,8 @@ public class EncoderImp implements Encoder {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+                            Log.i(TAG, "EncoderImp: outDataLen===="+outData.length);
+
                             Log.i(TAG, "EncoderImp: size===="+QueueManager.getFrameQueueSize());
                             if (QueueManager.getFrameQueueSize()>=QueueManager.getFrameQueueCapacity()) {
                                 QueueManager.pollDataFromFrameQueue();
@@ -123,8 +126,6 @@ public class EncoderImp implements Encoder {
             }
             mMediaCodec.stop();
             mMediaCodec.release();
-
-
         });
         initialHandler();
     }
@@ -163,6 +164,11 @@ public class EncoderImp implements Encoder {
     @Override
     public Size getPushSize() {
         return mEncodeSize;
+    }
+
+    @Override
+    public String getPushType() {
+        return mEncodeType;
     }
 
     @Override

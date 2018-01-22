@@ -169,7 +169,7 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
 
     @Override
     public void closeCamera() {
-
+        closePreviewSession();
         if (mCameraDevice != null) {
             mCameraDevice.close();
             mPreviewSettingSize = null;

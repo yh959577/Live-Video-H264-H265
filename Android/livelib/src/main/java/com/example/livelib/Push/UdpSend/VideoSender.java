@@ -7,8 +7,8 @@ import java.net.UnknownHostException;
  */
 
 public interface VideoSender {
-    void initial(String pushAddress) throws UnknownHostException;
-    void initial(String ip, int port) throws UnknownHostException;
+    void initial(String pushAddress,String pushType) throws UnknownHostException;
+    void initial(String ip, int port,String pushType) throws UnknownHostException;
     void startSendVideoData();
     void stop();
 }

@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
@@ -14,7 +13,7 @@ import com.example.hy.liveexampleandroid.LivePlayer.PlayActivity;
 import com.example.hy.liveexampleandroid.LiveSend.SendActivity;
 import com.example.hy.liveexampleandroid.R;
 import com.example.hy.liveexampleandroid.Util.ToastUtil;
-import com.example.livelib.Push.Util.PermissionUtil;
+import com.example.livelib.Util.PermissionUtil;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {

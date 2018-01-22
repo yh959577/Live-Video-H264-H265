@@ -9,6 +9,7 @@ public interface PlayPresenter {
     void startPlay(String address,int port);
     void stopPlay();
     void takePic();
+    void onDestroy();
 
 
 

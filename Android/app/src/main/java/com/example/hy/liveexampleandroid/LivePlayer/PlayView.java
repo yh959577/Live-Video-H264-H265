@@ -16,10 +16,6 @@ public interface PlayView {
 
     void stopProgress();
 
-    boolean IpIsValid();
-
-    boolean IpIsEmpty();
-
     void showIpEmptyError();
 
     void showIpInvalidError();

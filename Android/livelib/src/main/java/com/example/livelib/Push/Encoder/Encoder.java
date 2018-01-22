@@ -13,5 +13,6 @@ public interface Encoder {
     void setPushSize(Size pushSize);
     void setPushType(String pushType);
     Size getPushSize();
+    String getPushType();
     void onDestroy();
 }

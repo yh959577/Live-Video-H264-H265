@@ -9,10 +9,8 @@ import com.example.livelib.Push.Camera.Camera;
 import com.example.livelib.Push.Camera.CameraImp;
 import com.example.livelib.Push.Encoder.Encoder;
 import com.example.livelib.Push.Encoder.EncoderImp;
-import com.example.livelib.Push.Exception.IllegalIpAddress;
 import com.example.livelib.Push.UdpSend.VideoSender;
 import com.example.livelib.Push.UdpSend.VideoSenderImp;
-import com.example.livelib.Push.Util.IpChecker;
 
 import java.net.UnknownHostException;
 
@@ -29,25 +27,26 @@ public class PusherImp implements Pusher {
     public static Size[] supportSize;
     private int mPort;
 
+
     public static PusherImp buildPusher(TextureView textureView, CameraManager cameraManager) {
         return new PusherImp(textureView, cameraManager);
     }
 
 
-    private PusherImp(TextureView textureView, CameraManager cameraManager)  {
-          //  mPushAddress = pushAddress.substring(0, pushAddress.indexOf(':'));
-         //   mPort = Integer.valueOf(pushAddress.substring(pushAddress.indexOf(':') + 1));
-            mCamera = new CameraImp(textureView, cameraManager);
-            mEncoder = new EncoderImp();
-            mVideoSender=new VideoSenderImp();
-            initial();
+    private PusherImp(TextureView textureView, CameraManager cameraManager) {
+        //  mPushAddress = pushAddress.substring(0, pushAddress.indexOf(':'));
+        //   mPort = Integer.valueOf(pushAddress.substring(pushAddress.indexOf(':') + 1));
+        mCamera = new CameraImp(textureView, cameraManager);
+        mEncoder = new EncoderImp();
+        mVideoSender = new VideoSenderImp();
+        initial();
     }
 
 
     @Override
-    public void initial()  {
+    public void initial() {
         mCamera.initial();
-      //  mVideoSender.initial(mPushAddress,mPort);
+        //  mVideoSender.initial(mPushAddress,mPort);
     }
 
     @Override
@@ -57,7 +56,7 @@ public class PusherImp implements Pusher {
         mEncoder.initial();
         mCamera.startPush(mEncoder.getPushSize());
         mEncoder.startEncoder();
-        mVideoSender.initial(pushAddress);
+        mVideoSender.initial(pushAddress, mEncoder.getPushType());
         mVideoSender.startSendVideoData();
         //   mVideoSender.sendVideoData(mPushAddress);
     }
@@ -97,6 +96,8 @@ public class PusherImp implements Pusher {
 
     @Override
     public void onDestroy() {
+        mEncoder.stopEncoder();
+        mVideoSender.stop();
         mCamera.closeCamera();
     }
 }

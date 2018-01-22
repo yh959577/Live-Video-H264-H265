@@ -31,17 +31,19 @@ public class PlayActivity extends AppCompatActivity implements PlayView, View.On
         mTextureView = findViewById(R.id.play_texture);
         mPlayBtn.setOnClickListener(this);
         mTakePicBtn.setOnClickListener(this);
+        mEditText.setText("45.63.120.218:8612");
         mPlayPresenter = new PlayPresenterImp(this);
+
     }
 
     @Override
     public void btnTextChangeToStart() {
-
+             mPlayBtn.setText(getResources().getText(R.string.LivePlay));
     }
 
     @Override
     public void btnTextChangeToStop() {
-
+        mPlayBtn.setText(getResources().getText(R.string.LiveStop));
     }
 
     @Override
@@ -55,23 +57,13 @@ public class PlayActivity extends AppCompatActivity implements PlayView, View.On
     }
 
     @Override
-    public boolean IpIsValid() {
-        return false;
-    }
-
-    @Override
-    public boolean IpIsEmpty() {
-        return false;
-    }
-
-    @Override
     public void showIpEmptyError() {
-
+        mEditText.setError(getString(R.string.Ip_Empty_Error));
     }
 
     @Override
     public void showIpInvalidError() {
-
+        mEditText.setError(getString(R.string.Ip_Error));
     }
 
     @Override
@@ -84,12 +76,16 @@ public class PlayActivity extends AppCompatActivity implements PlayView, View.On
         switch (v.getId()) {
             case R.id.play_live_btn:
                 if (mPlayBtn.getText().toString().equals(getResources().getString(R.string.LivePlay)))
-                    mPlayPresenter.startPlay();
+                    mPlayPresenter.startPlay(mEditText.getText().toString());
                 else if (mPlayBtn.getText().toString().equals(getResources().getString(R.string.LiveStop)))
                     mPlayPresenter.stopPlay();
                 break;
         }
+    }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mPlayPresenter.onDestroy();
     }
 }

@@ -1,9 +1,10 @@
 package com.example.livelib.Push.UdpSend;
 
+import android.media.MediaFormat;
 import android.util.Log;
 
 import com.example.livelib.Push.Queue.QueueManager;
-import com.example.livelib.Push.Util.ByteTransitionUtil;
+import com.example.livelib.Util.ByteTransitionUtil;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -21,22 +22,31 @@ public class VideoSenderImp implements VideoSender {
     private DatagramSocket mDatagramSocket;
     private InetAddress mInetAddress;
     private Thread mSendThread;
+    private String mPushType;
+    private byte mTypeTag;
     private boolean isRunning = true;
     private int singleUdpSize = 300;
     private static final String TAG = "VideoSenderImp";
     private int udpPackNum = 0;
 
     @Override
-    public void initial(String pushAddress) throws UnknownHostException {
+    public void initial(String pushAddress,String pushType) throws UnknownHostException {
         mInetAddress = InetAddress.getByName(pushAddress.substring(0, pushAddress.indexOf(':')));
         mPort = Integer.valueOf(pushAddress.substring(pushAddress.indexOf(':') + 1));
+        mPushType=pushType;
+        if (mPushType.equals(MediaFormat.MIMETYPE_VIDEO_AVC))
+            mTypeTag='r';
+       else if (mPushType.equals(MediaFormat.MIMETYPE_VIDEO_HEVC))
+            mTypeTag='e';
+
         initialSendWork();
     }
 
     @Override
-    public void initial(String ip, int port) throws UnknownHostException {
+    public void initial(String ip, int port,String pushType) throws UnknownHostException {
         mInetAddress = InetAddress.getByName(ip);
         mPort = port;
+        mPushType=pushType;
         initialSendWork();
     }
 
@@ -119,11 +129,13 @@ public class VideoSenderImp implements VideoSender {
     private byte[] addHead(byte[] sendData) {
         byte[] sequenceNum = ByteTransitionUtil.intToByte(udpPackNum);
         byte[] timeNum = ByteTransitionUtil.longToBytes(System.currentTimeMillis());
-        byte[] completeUdpData = new byte[sendData.length + sequenceNum.length + timeNum.length];
+        byte[] completeUdpData = new byte[sendData.length + sequenceNum.length + timeNum.length+1];
 
         System.arraycopy(sequenceNum, 0, completeUdpData, 0, sequenceNum.length);
         System.arraycopy(timeNum, 0, completeUdpData, sequenceNum.length, timeNum.length);
-        System.arraycopy(sendData, 0, completeUdpData, sequenceNum.length + timeNum.length, sendData.length);
+        completeUdpData[sequenceNum.length+timeNum.length]=mTypeTag;
+        System.arraycopy(sendData, 0, completeUdpData, sequenceNum.length + timeNum.length+1, sendData.length);
+
         return completeUdpData;
     }
 
