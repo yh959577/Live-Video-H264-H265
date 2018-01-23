@@ -34,6 +34,10 @@ public class UdpStruct {
          return mVideoData;
     }
 
+    int getVideoDataLen(){
+        return mVideoData.length;
+    }
+
     byte getVideoTypeTag(){return mVideoTypeTag;}
 
 }

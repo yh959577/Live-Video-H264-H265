@@ -7,7 +7,6 @@ import java.nio.ByteBuffer;
  */
 
 public class ByteTransitionUtil {
-    private static ByteBuffer buffer = ByteBuffer.allocate(8);
 
     public static byte[] intToByte(int a) {
         return new byte[]{
@@ -28,14 +27,21 @@ public class ByteTransitionUtil {
 
     //byte 数组与 long 的相互转换
     public static byte[] longToBytes(long x) {
-        buffer.putLong(0, x);
-        return buffer.array();
+        byte[] byteNum = new byte[8];
+        for (int ix = 0; ix < 8; ++ix) {
+            int offset = 64 - (ix + 1) * 8;
+            byteNum[ix] = (byte) ((x >> offset) & 0xff);
+        }
+        return byteNum;
     }
 
     public static long bytesToLong(byte... bytes) {
-        buffer.put(bytes, 0, bytes.length);
-        buffer.flip();//need flip
-        return buffer.getLong();
+        long num = 0;
+        for (int ix = 0; ix < 8; ++ix) {
+            num <<= 8;
+            num |= (bytes[ix] & 0xff);
+        }
+        return num;
     }
 
 
