@@ -10,13 +10,13 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 
 public class QueueManager {
-    private static ArrayBlockingQueue<byte[]> frameQueue = new ArrayBlockingQueue<byte[]>(10);
+    private static ArrayBlockingQueue<byte[]> frameQueue = new ArrayBlockingQueue<byte[]>(15);
     private static ArrayBlockingQueue<UdpStruct> udpOrderQueue = new ArrayBlockingQueue<UdpStruct>(300);
 
 
     static void addDataToFrameQueue(byte[] b) {
         if (frameQueue.size()>10)
-            frameQueue.remove();
+            frameQueue.poll();
         frameQueue.add(b);
     }
 

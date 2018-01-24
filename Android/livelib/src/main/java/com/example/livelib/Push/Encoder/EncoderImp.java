@@ -31,12 +31,13 @@ public class EncoderImp implements Encoder {
     private Size mEncodeSize = null;
     private MediaCodec mMediaCodec = null;
     private MediaFormat mMediaFormat = null;
-    private boolean isRuning;
+    private volatile boolean isRunning;
     private FileOutputStream fileOutputStream;
     private byte[] configureByte;  //the configure info before the key frame
     private int TIMEOUT_USEC = 12000;
     private int frame_rate = 30;
     private byte[] yuv420;
+    private Runnable mEncoderRunnable;
     private Handler mHandler;
     private CameraCaptureSession.StateCallback mCameraCaptureSessionStateCallback;
 
@@ -47,13 +48,14 @@ public class EncoderImp implements Encoder {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        mEncodeThread = new Thread(() -> {
-            isRuning = true;
+
+        mEncoderRunnable = () -> {
+            isRunning = true;
             byte[] input = null;
             long pts = 0;
             long generateIndex = 0;
             yuv420 = new byte[mEncodeSize.getHeight() * mEncodeSize.getWidth() * 3 / 2];
-            while (isRuning) {
+            while (isRunning) {
                 if (QueueManager.getYUVQueueSize() > 0) {
                     input = QueueManager.pollDataFromYUVQueue();
                     swapYV12toNV12(input, yuv420, mEncodeSize.getWidth(), mEncodeSize.getHeight());
@@ -83,19 +85,19 @@ public class EncoderImp implements Encoder {
                             byte[] keyFrame = new byte[bufferInfo.size + configureByte.length];
                             System.arraycopy(configureByte, 0, keyFrame, 0, configureByte.length);
                             System.arraycopy(outData, 0, keyFrame, configureByte.length, outData.length);
-                            Log.i(TAG, "EncoderImp: keyFrameLen===="+keyFrame.length);
+                            Log.i(TAG, "EncoderImp: keyFrameLen====" + keyFrame.length);
                             try {
                                 fileOutputStream.write(keyFrame, 0, keyFrame.length);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            Log.i(TAG, "EncoderImp: size===="+QueueManager.getFrameQueueSize());
-                            if (QueueManager.getFrameQueueSize()>=QueueManager.getFrameQueueCapacity()){
-                                Log.i(TAG, "EncoderImp: size>30 size==="+QueueManager.getFrameQueueSize());
+                            Log.i(TAG, "EncoderImp: size====" + QueueManager.getFrameQueueSize());
+                            if (QueueManager.getFrameQueueSize() >= QueueManager.getFrameQueueCapacity()) {
+                                Log.i(TAG, "EncoderImp: size>30 size===" + QueueManager.getFrameQueueSize());
                                 QueueManager.pollDataFromFrameQueue();
                             }
 
-                             QueueManager.addDataToFrameQueue(keyFrame);
+                            QueueManager.addDataToFrameQueue(keyFrame);
 
                         } else {
                             try {
@@ -103,10 +105,10 @@ public class EncoderImp implements Encoder {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            Log.i(TAG, "EncoderImp: outDataLen===="+outData.length);
+                            Log.i(TAG, "EncoderImp: outDataLen====" + outData.length);
 
-                            Log.i(TAG, "EncoderImp: size===="+QueueManager.getFrameQueueSize());
-                            if (QueueManager.getFrameQueueSize()>=QueueManager.getFrameQueueCapacity()) {
+                            Log.i(TAG, "EncoderImp: size====" + QueueManager.getFrameQueueSize());
+                            if (QueueManager.getFrameQueueSize() >= QueueManager.getFrameQueueCapacity()) {
                                 QueueManager.pollDataFromFrameQueue();
                                 Log.i(TAG, "EncoderImp: size>30");
                             }
@@ -126,15 +128,18 @@ public class EncoderImp implements Encoder {
             }
             mMediaCodec.stop();
             mMediaCodec.release();
-        });
+        };
+
+        //  mEncodeThread = new Thread(mEncoderRunnable);
         initialHandler();
     }
 
-    private void initialHandler(){
+    private void initialHandler() {
         HandlerThread threadHandler = new HandlerThread("CAMERA2");
         threadHandler.start();
         mHandler = new Handler(threadHandler.getLooper());
     }
+
     @Override
     public void initial() {
         initialMediaCodec();
@@ -143,12 +148,19 @@ public class EncoderImp implements Encoder {
     @Override
     public void startEncoder() {
         mMediaCodec.start();
+        mEncodeThread = new Thread(mEncoderRunnable);
         mEncodeThread.start();
+
     }
 
     @Override
     public void stopEncoder() {
-        isRuning = false;
+        isRunning = false;
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -198,9 +210,6 @@ public class EncoderImp implements Encoder {
             nv12bytes[nLenY + 2 * i] = yv12bytes[nLenY + i];//y             even number is y
         }
     }
-
-
-
 
 
     private void initialMediaCodec() {

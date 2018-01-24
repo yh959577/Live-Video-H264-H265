@@ -13,20 +13,25 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:largeHeap="true"
-
         >
 
-        <activity android:name=".Main.MainActivity" >
+        <activity android:name=".Main.MainActivity"
+
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".LivePlayer.PlayActivity">
+        <activity android:name=".LivePlayer.PlayActivity"
+            android:screenOrientation="portrait"
+            >
         </activity>
 
-        <activity android:name=".LiveSend.SendActivity">
+        <activity android:name=".LiveSend.SendActivity"
+            android:screenOrientation="portrait"
+            >
         </activity>
 
     </application>

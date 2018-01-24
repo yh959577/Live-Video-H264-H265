@@ -31,7 +31,7 @@ public class PlayActivity extends AppCompatActivity implements PlayView, View.On
         mTextureView = findViewById(R.id.play_texture);
         mPlayBtn.setOnClickListener(this);
         mTakePicBtn.setOnClickListener(this);
-        mEditText.setText("45.63.120.218:8612");
+        mEditText.setText("192.168.2.113:8612");
         mPlayPresenter = new PlayPresenterImp(this);
 
     }

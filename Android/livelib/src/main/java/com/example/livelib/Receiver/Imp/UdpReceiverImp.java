@@ -34,6 +34,7 @@ public class UdpReceiverImp implements UdpReceiver {
     public void initial(InetAddress address, int port) throws SocketException {
         initialUdp();
         mSendHeartRunnable = new SendUdpHeartRunnable(mDatagramSocket, address, port);
+
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
         service.scheduleAtFixedRate(mSendHeartRunnable, 5, 5, TimeUnit.SECONDS);
 

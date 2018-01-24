@@ -72,11 +72,12 @@ public class SettingPopupWindowView extends ConstraintLayout {
 
     private void initialRadioBtn(Context context) {
         int btnNum=0;
-        if (mSupportSize.length>6){
-            btnNum=6;
-        }else {
-            btnNum= mSupportSize.length;
-        }
+//        if (mSupportSize.length>6){
+//            btnNum=6;
+//        }else {
+//            btnNum= mSupportSize.length;
+//        }
+        btnNum=mSupportSize.length;
         mPreviewBtns=new RadioButton[btnNum];
         mPushBtns=new RadioButton[btnNum];
 

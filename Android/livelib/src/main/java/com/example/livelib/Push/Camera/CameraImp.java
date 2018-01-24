@@ -24,6 +24,7 @@ import android.view.TextureView;
 
 import com.example.livelib.Push.PusherImp;
 import com.example.livelib.Push.Queue.QueueManager;
+import com.example.livelib.Util.SupportSizeUtil;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -38,9 +39,6 @@ import java.util.List;
 public class CameraImp implements Camera, TextureView.SurfaceTextureListener, ImageReader.OnImageAvailableListener {
 
     private Handler mPreviewHandler;
-    private Handler mImageHandler;
-    //  private CameraDevice.StateCallback mCameraDeviceStateCallback;
-    //  private CameraCaptureSession.StateCallback mCameraCaptureSessionStateCallback;
     private CaptureRequest.Builder mPreviewBuilder;
     private CameraCaptureSession mPreviewSession;
     private Size[] mSupportSize = null;
@@ -55,6 +53,7 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
     private static final int CameraBackIndex = 0;
     private static final int CameraFrontIndex = 1;
     private int mCameraIndex;
+    private boolean mIsClearQueue;
 
     public CameraImp(TextureView textureView, CameraManager cameraManager) {
         mCameraManager = cameraManager;
@@ -75,7 +74,6 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
         imageThreadHandler.start();
 
         mPreviewHandler = new Handler(previewThreadHandler.getLooper());
-        mImageHandler = new Handler(imageThreadHandler.getLooper());
     }
 
     @Override
@@ -109,6 +107,7 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
     @Override
     public void startPush(Size encoderSize) throws CameraAccessException {
      //   mIsProcessImage = true;
+        mIsClearQueue=false;
         if (null == mCameraDevice || !mTextureView.isAvailable() || null == mPreviewSettingSize) {
             return;
         }
@@ -156,7 +155,8 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
 
     @Override
     public void stopPush() throws CameraAccessException {
-        QueueManager.clearYUVQueue();
+      //  QueueManager.clearYUVQueue();
+        mIsClearQueue=true;
         startPreview();
     }
 
@@ -207,18 +207,14 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
 
     @Override
     public void onImageAvailable(ImageReader reader) {
-        // Log.i(TAG, "onImageAvailable: ");
         Image image = reader.acquireNextImage();
-         //   Log.i(TAG, "YUV_420_888toNV21: width==" + image.getWidth() + " height==" + image.getHeight());
             if (QueueManager.getYUVQueueSize() >= QueueManager.getYUVQueueCapacity()) {
                 QueueManager.pollDataFromYUVQueue();
             }
             QueueManager.addDataToYUVQueue(convertImgToYUVData(image));
-            //        Log.i(TAG, "onImageAvailable: planes=="+Arrays.toString(image.getPlanes()));
-
-            //      Log.i(TAG, "onImageAvailable: push Image to queue");
-
         image.close();
+        if (mIsClearQueue)
+            QueueManager.clearYUVQueue();
     }
 
     private void adjustTextureViewSize(int width, int height) {
@@ -265,6 +261,8 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
         if (mIsPreviewSizeChanged) {
             adjustTextureViewSize(mTextureView.getWidth(), mTextureView.getHeight());
         }
+        if (QueueManager.getYUVQueueSize()>0)
+            QueueManager.clearYUVQueue();
     }
 
 
@@ -274,7 +272,7 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
             CameraCharacteristics cameraCharacteristics = mCameraManager.getCameraCharacteristics(mCameraList[cameraIndex]);
             StreamConfigurationMap map = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             assert map != null;
-            mSupportSize = map.getOutputSizes(SurfaceTexture.class);
+            mSupportSize = SupportSizeUtil.getOptimisticSizes( map.getOutputSizes(SurfaceTexture.class));
             if (mPreviewSettingSize == null)
                 mPreviewSettingSize = mSupportSize[0];
             PusherImp.supportSize = mSupportSize.clone();

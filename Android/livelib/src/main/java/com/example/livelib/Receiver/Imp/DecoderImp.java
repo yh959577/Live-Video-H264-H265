@@ -56,12 +56,14 @@ public class DecoderImp implements Decoder {
                     if (isSpsHead(frameData)) {
                         int len = findNextFrame(frameData, frameData.length);
                         if (len > 0) {
-                            byte[] sps = new byte[len];
+                            byte[] sps = new byte[len-5];
 
-                            System.arraycopy(frameData, 0, sps, 0, len);
-                           // int decodeWidth = (H264SPSPaser.ue(sps, 34) + 1) * 16;
-                          //  int decodeHeight = (H264SPSPaser.ue(sps, -1) + 1) * 16;
-                         //   Log.i(TAG, "the video width====: " + decodeWidth);
+                            System.arraycopy(frameData, 5, sps, 0, len-5);
+                            Log.i(TAG, "spsContent: "+Arrays.toString(sps));
+                            int decodeWidth = (H264SPSPaser.ue(sps, 34) + 1) * 16;
+                            int decodeHeight = (H264SPSPaser.ue(sps, -1) + 1) * 16;
+                            Log.i(TAG, "the video width====: " + decodeWidth);
+                            Log.i(TAG, "the video ====: " + decodeHeight);
                             Log.i(TAG, "the sps content====: " + Arrays.toString(sps));
 
                         } else {
