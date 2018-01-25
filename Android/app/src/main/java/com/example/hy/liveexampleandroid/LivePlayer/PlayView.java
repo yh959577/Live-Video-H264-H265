@@ -1,5 +1,6 @@
 package com.example.hy.liveexampleandroid.LivePlayer;
 
+import android.view.SurfaceHolder;
 import android.view.TextureView;
 
 /**
@@ -20,6 +21,6 @@ public interface PlayView {
 
     void showIpInvalidError();
 
-    TextureView supplyTextureView();
+    SurfaceHolder supplySurfaceHolder();
 
 }

@@ -9,13 +9,13 @@ import java.util.concurrent.ArrayBlockingQueue;
  * Created by Hamik Young on 2018/1/22.
  */
 
-public class QueueManager {
-    private static ArrayBlockingQueue<byte[]> frameQueue = new ArrayBlockingQueue<byte[]>(15);
+public class ReceiveQueueManager {
+    private static ArrayBlockingQueue<byte[]> frameQueue = new ArrayBlockingQueue<byte[]>(200);
     private static ArrayBlockingQueue<UdpStruct> udpOrderQueue = new ArrayBlockingQueue<UdpStruct>(300);
 
 
     static void addDataToFrameQueue(byte[] b) {
-        if (frameQueue.size()>10)
+        if (frameQueue.size()>100)
             frameQueue.poll();
         frameQueue.add(b);
     }

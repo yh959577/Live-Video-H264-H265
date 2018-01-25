@@ -155,7 +155,7 @@ public class CameraImp implements Camera, TextureView.SurfaceTextureListener, Im
 
     @Override
     public void stopPush() throws CameraAccessException {
-      //  QueueManager.clearYUVQueue();
+      //  ReceiveQueueManager.clearYUVQueue();
         mIsClearQueue=true;
         startPreview();
     }

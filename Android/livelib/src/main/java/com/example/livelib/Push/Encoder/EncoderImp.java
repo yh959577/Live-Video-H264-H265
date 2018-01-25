@@ -32,7 +32,7 @@ public class EncoderImp implements Encoder {
     private MediaCodec mMediaCodec = null;
     private MediaFormat mMediaFormat = null;
     private volatile boolean isRunning;
-    private FileOutputStream fileOutputStream;
+   // private FileOutputStream fileOutputStream;
     private byte[] configureByte;  //the configure info before the key frame
     private int TIMEOUT_USEC = 12000;
     private int frame_rate = 30;
@@ -42,12 +42,12 @@ public class EncoderImp implements Encoder {
     private CameraCaptureSession.StateCallback mCameraCaptureSessionStateCallback;
 
     public EncoderImp() {
-        try {
-            fileOutputStream = new FileOutputStream(new File(Environment.getExternalStorageDirectory().getPath()
-                    + "/testH264.h264"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            fileOutputStream = new FileOutputStream(new File(Environment.getExternalStorageDirectory().getPath()
+//                    + "/testH264.h264"));
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
 
         mEncoderRunnable = () -> {
             isRunning = true;
@@ -86,25 +86,23 @@ public class EncoderImp implements Encoder {
                             System.arraycopy(configureByte, 0, keyFrame, 0, configureByte.length);
                             System.arraycopy(outData, 0, keyFrame, configureByte.length, outData.length);
                             Log.i(TAG, "EncoderImp: keyFrameLen====" + keyFrame.length);
-                            try {
-                                fileOutputStream.write(keyFrame, 0, keyFrame.length);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+//                            try {
+//                                fileOutputStream.write(keyFrame, 0, keyFrame.length);
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
                             Log.i(TAG, "EncoderImp: size====" + QueueManager.getFrameQueueSize());
                             if (QueueManager.getFrameQueueSize() >= QueueManager.getFrameQueueCapacity()) {
-                                Log.i(TAG, "EncoderImp: size>30 size===" + QueueManager.getFrameQueueSize());
+                                Log.i(TAG, "EncoderImp: size>300 size===" + QueueManager.getFrameQueueSize());
                                 QueueManager.pollDataFromFrameQueue();
                             }
-
                             QueueManager.addDataToFrameQueue(keyFrame);
-
                         } else {
-                            try {
-                                fileOutputStream.write(outData, 0, outData.length);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+//                            try {
+//                                fileOutputStream.write(outData, 0, outData.length);
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
                             Log.i(TAG, "EncoderImp: outDataLen====" + outData.length);
 
                             Log.i(TAG, "EncoderImp: size====" + QueueManager.getFrameQueueSize());

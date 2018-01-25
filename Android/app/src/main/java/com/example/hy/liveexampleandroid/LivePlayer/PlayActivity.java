@@ -3,6 +3,8 @@ package com.example.hy.liveexampleandroid.LivePlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
@@ -18,7 +20,7 @@ public class PlayActivity extends AppCompatActivity implements PlayView, View.On
     Button mPlayBtn;
     Button mTakePicBtn;
     EditText mEditText;
-    TextureView mTextureView;
+    SurfaceView mSurfaceView;
     PlayPresenter mPlayPresenter;
 
     @Override
@@ -28,12 +30,11 @@ public class PlayActivity extends AppCompatActivity implements PlayView, View.On
         mPlayBtn = findViewById(R.id.play_live_btn);
         mTakePicBtn = findViewById(R.id.take_pic_btn);
         mEditText = findViewById(R.id.receive_IP);
-        mTextureView = findViewById(R.id.play_texture);
+        mSurfaceView = findViewById(R.id.play_texture);
         mPlayBtn.setOnClickListener(this);
         mTakePicBtn.setOnClickListener(this);
         mEditText.setText("192.168.2.113:8612");
         mPlayPresenter = new PlayPresenterImp(this);
-
     }
 
     @Override
@@ -67,8 +68,8 @@ public class PlayActivity extends AppCompatActivity implements PlayView, View.On
     }
 
     @Override
-    public TextureView supplyTextureView() {
-        return null;
+    public SurfaceHolder supplySurfaceHolder() {
+        return mSurfaceView.getHolder();
     }
 
     @Override

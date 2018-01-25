@@ -1,5 +1,7 @@
 package com.example.livelib.Receiver.Imp;
 
+import android.view.SurfaceHolder;
+
 import com.example.livelib.Receiver.Interface.Decoder;
 import com.example.livelib.Receiver.Interface.Receiver;
 import com.example.livelib.Receiver.Interface.UdpReceiver;
@@ -20,15 +22,17 @@ public class ReceiverImp implements Receiver {
 
     private static ReceiverImp instance;
 
-    public static ReceiverImp buildReceiver() {
-        if (null == instance)
-            instance = new ReceiverImp();
+    public static ReceiverImp buildReceiver(SurfaceHolder holder) {
+        if (null == instance) {
+            instance = new ReceiverImp(holder);
+        }
         return instance;
     }
 
-    private ReceiverImp() {
+    private ReceiverImp(SurfaceHolder holder) {
         mUdpReceiver = new UdpReceiverImp();
-        mDecoder=new DecoderImp();
+        mDecoder=new DecoderImp(holder);
+
     }
 
     @Override

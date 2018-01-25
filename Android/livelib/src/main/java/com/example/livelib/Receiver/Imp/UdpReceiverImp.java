@@ -47,7 +47,7 @@ public class UdpReceiverImp implements UdpReceiver {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
+                long startTime=System.currentTimeMillis();
                 if (mRcBuf[0] == 'R' && mRcBuf[1] == 'C') {
                     Log.i(TAG, "receive heart beat!!!!");
                 } else {
@@ -55,10 +55,10 @@ public class UdpReceiverImp implements UdpReceiver {
                     UdpStruct udpStruct = new UdpStruct(mRcBuf, mDatagramPacket.getLength());
                     if (mOrderedList.size() > 0)
                         for (int i = mOrderedList.size() - 1; i >= 0; i--) {
-                            Log.i(TAG, "QueueManager.getOrderListSize(): ==" + mOrderedList.size());
+                            Log.i(TAG, "ReceiveQueueManager.getOrderListSize(): ==" + mOrderedList.size());
                             Log.i(TAG, "initial: I===" + i);
                             if (udpStruct.getSequenceNum() > mOrderedList.get(i).getSequenceNum()) {
-                                //   QueueManager.addDataToOrderList(i + 1, udpStruct);
+                                //   ReceiveQueueManager.addDataToOrderList(i + 1, udpStruct);
                                 mOrderedList.add(i + 1, udpStruct);
                                 break;
                             }
@@ -66,9 +66,10 @@ public class UdpReceiverImp implements UdpReceiver {
                     else mOrderedList.add(udpStruct);
                 }
                 if (mOrderedList.size() > 50) {
-                    QueueManager.addDataToUdpOrderQueue(mOrderedList.get(0));
+                    ReceiveQueueManager.addDataToUdpOrderQueue(mOrderedList.get(0));
                     mOrderedList.remove(0);
                 }
+                Log.d(TAG, "time consume: "+(System.currentTimeMillis()-startTime));
             }
             mOrderedList.clear();
             service.shutdown();
@@ -89,7 +90,7 @@ public class UdpReceiverImp implements UdpReceiver {
 
     private void initialUdp() throws SocketException {
         mDatagramSocket = new DatagramSocket();
-        mRcBuf = new byte[500];
+        mRcBuf = new byte[1024];
         mDatagramPacket = new DatagramPacket(mRcBuf, mRcBuf.length);
         mOrderedList = new ArrayList<>();
     }

@@ -1,5 +1,7 @@
 package com.example.hy.liveexampleandroid.LivePlayer;
 
+import android.view.SurfaceHolder;
+
 import com.example.livelib.Receiver.Imp.ReceiverImp;
 import com.example.livelib.Receiver.Interface.Receiver;
 
@@ -13,9 +15,8 @@ import java.net.UnknownHostException;
 public class PlayModelImp implements PlayModel {
     private Receiver mReceiver;
 
-
-    PlayModelImp() {
-        mReceiver = ReceiverImp.buildReceiver();
+    PlayModelImp(SurfaceHolder surfaceHolder) {
+        mReceiver = ReceiverImp.buildReceiver(surfaceHolder);
 
     }
 

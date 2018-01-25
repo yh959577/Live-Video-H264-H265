@@ -12,7 +12,7 @@ public class PlayPresenterImp implements PlayPresenter {
 
     PlayPresenterImp(PlayView playView) {
         mPlayView = playView;
-        mPlayModel = new PlayModelImp();
+        mPlayModel = new PlayModelImp(mPlayView.supplySurfaceHolder());
     }
 
     @Override
