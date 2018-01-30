@@ -2,11 +2,14 @@ package com.example.livelib.Receiver.Imp;
 
 import android.media.MediaCodec;
 import android.media.MediaFormat;
+import android.os.Build;
 import android.os.Environment;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.example.livelib.Receiver.Interface.Decoder;
+import com.example.livelib.Receiver.Interface.Receiver;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,7 +41,7 @@ public class DecoderImp implements Decoder {
         mJointFrameThread = new JointFrameThread();
         try {
             fileOutputStream = new FileOutputStream(new File(Environment.getExternalStorageDirectory().
-                    getPath() + "/udp264.264"));
+                    getPath() + "/udp264.h264"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -63,10 +66,13 @@ public class DecoderImp implements Decoder {
         @Override
         public void run() {
             while (isDecodeRunning) {
+                if (ReceiveQueueManager.getFrameQueueSize()<5)
+                    continue;
                 byte[] frameData = ReceiveQueueManager.getDataFromFrameQueue();
                 if (frameData != null) {
                     Log.i(TAG, "the frame content: " + Arrays.toString(frameData));
                         //check video info
+                    if (mMediaCodec==null) {
                         if (isH264SpsHead(frameData)) {
                             Log.i(TAG, "Find 264 frame!!!");
                             MIME_TYPE = MediaFormat.MIMETYPE_VIDEO_AVC;
@@ -98,23 +104,21 @@ public class DecoderImp implements Decoder {
                             } else {
                                 Log.i(TAG, "Sps error!!!");
                             }
-                        } else {
+                        }
+                    }
+                        else {
                             Log.i(TAG, "Normal frame!!!");
                             if (mMediaCodec != null)
                                 decodeData(frameData);
                         }
 
-                } else {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                 }
 
             }
         }
     }
+
+
         private void resetMediaDecoder(byte[] sps, byte[] pps, String codecType) throws IOException {
             Log.i(TAG, "resetMediaDecoder: ");
             if (mMediaCodec != null || mMediaFormat != null) {
@@ -123,11 +127,10 @@ public class DecoderImp implements Decoder {
                 mMediaCodec = null;
                 mMediaFormat = null;
             }
-
             mMediaCodec = MediaCodec.createDecoderByType(codecType);
             //set sps pps can ignore width and height
             mMediaFormat = MediaFormat.createVideoFormat(codecType, 0, 0);
-
+         //   mMediaFormat.setInteger(MediaFormat.KEY_ROTATION, 90);
             if (codecType.equals(MediaFormat.MIMETYPE_VIDEO_AVC)) {
                 mMediaFormat.setByteBuffer("csd-0", ByteBuffer.wrap(sps));
                 mMediaFormat.setByteBuffer("csd-1", ByteBuffer.wrap(pps));
@@ -171,6 +174,11 @@ public class DecoderImp implements Decoder {
                 //logger.e("outputBufferIndex = " + outputBufferIndex);
                 Log.i(TAG, "decodeDataFailed: ");
             }
+            try {
+                Thread.sleep(1000/30);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         private class JointFrameThread extends Thread {
@@ -180,9 +188,7 @@ public class DecoderImp implements Decoder {
             JointFrameThread() {
                 frameBuf = new byte[1024 * 1024];
                 frameShift = 0;
-
             }
-
             @Override
             public void run() {
                 while (isDecodeRunning) {
@@ -194,12 +200,12 @@ public class DecoderImp implements Decoder {
                             if (udpStruct.getVideoTypeTag() == 'r') {
                                 Log.i(TAG, "find this is H264 format");
                                 MIME_TYPE = MediaFormat.MIMETYPE_VIDEO_AVC;
-                                headPosition = find_H264_frame_head(udpStruct.getVideoData(), udpStruct.getVideoData().length);
+                                headPosition = find_H264_frame_head(udpStruct.getVideoData(), udpStruct.getVideoDataLen());
                                 //      Log.i(TAG, "udpStruct.getVideoData().length: ==" + udpStruct.getVideoDataLen());
                             } else if (udpStruct.getVideoTypeTag() == 'e') {
                                 Log.i(TAG, "find this is H265 format");
                                 MIME_TYPE = MediaFormat.MIMETYPE_VIDEO_HEVC;
-                                headPosition = find_H265_frame_head(udpStruct.getVideoData(), udpStruct.getVideoData().length);
+                                headPosition = find_H265_frame_head(udpStruct.getVideoData(), udpStruct.getVideoDataLen());
                             } else {
                                 Log.i(TAG, "find this is wrong format no format info in packet: ");
                                 headPosition = -2;
@@ -227,9 +233,6 @@ public class DecoderImp implements Decoder {
                                         byte[] frameData = new byte[frameShift];
                                         System.arraycopy(frameBuf, 0, frameData, 0, frameShift);
                                         ReceiveQueueManager.addDataToFrameQueue(frameData);
-
-
-
                                         frameShift = 0;
                                         System.arraycopy(udpStruct.getVideoData(), headPosition, frameBuf, 0,
                                                 udpStruct.getVideoDataLen() - headPosition);
@@ -246,11 +249,6 @@ public class DecoderImp implements Decoder {
                             }
                         }
 
-                    }
-                    try {
-                        Thread.sleep(1);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
                 }
             }

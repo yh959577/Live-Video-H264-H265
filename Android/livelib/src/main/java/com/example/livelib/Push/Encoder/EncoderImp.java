@@ -59,6 +59,7 @@ public class EncoderImp implements Encoder {
                 if (QueueManager.getYUVQueueSize() > 0) {
                     input = QueueManager.pollDataFromYUVQueue();
                     swapYV12toNV12(input, yuv420, mEncodeSize.getWidth(), mEncodeSize.getHeight());
+
                 }
                 if (yuv420 != null) {
                     long startMs = System.currentTimeMillis();
@@ -86,11 +87,7 @@ public class EncoderImp implements Encoder {
                             System.arraycopy(configureByte, 0, keyFrame, 0, configureByte.length);
                             System.arraycopy(outData, 0, keyFrame, configureByte.length, outData.length);
                             Log.i(TAG, "EncoderImp: keyFrameLen====" + keyFrame.length);
-//                            try {
-//                                fileOutputStream.write(keyFrame, 0, keyFrame.length);
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
+
                             Log.i(TAG, "EncoderImp: size====" + QueueManager.getFrameQueueSize());
                             if (QueueManager.getFrameQueueSize() >= QueueManager.getFrameQueueCapacity()) {
                                 Log.i(TAG, "EncoderImp: size>300 size===" + QueueManager.getFrameQueueSize());
@@ -187,7 +184,7 @@ public class EncoderImp implements Encoder {
     }
 
     private long computePresentationTime(long frameIndex) {
-        return 132 + frameIndex * 1000000 / frame_rate;
+        return  frameIndex * 1000000 / frame_rate;
     }
 
     private void swapYV12toI420(byte[] yv12bytes, byte[] i420bytes, int width, int height) {
@@ -230,4 +227,7 @@ public class EncoderImp implements Encoder {
         mMediaCodec.configure(mMediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         //   mMediaCodec.start();
     }
+
+
+
 }

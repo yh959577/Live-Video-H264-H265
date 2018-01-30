@@ -43,6 +43,7 @@ public class UdpReceiverImp implements UdpReceiver {
             mSendHeartRunnable.run();
             while (isReceiveData) {
                 try {
+
                     mDatagramSocket.receive(mDatagramPacket);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -52,24 +53,28 @@ public class UdpReceiverImp implements UdpReceiver {
                     Log.i(TAG, "receive heart beat!!!!");
                 } else {
                     Log.i(TAG, "receive video data len===" + mDatagramPacket.getLength());
-                    UdpStruct udpStruct = new UdpStruct(mRcBuf, mDatagramPacket.getLength());
-                    if (mOrderedList.size() > 0)
-                        for (int i = mOrderedList.size() - 1; i >= 0; i--) {
-                            Log.i(TAG, "ReceiveQueueManager.getOrderListSize(): ==" + mOrderedList.size());
-                            Log.i(TAG, "initial: I===" + i);
-                            if (udpStruct.getSequenceNum() > mOrderedList.get(i).getSequenceNum()) {
-                                //   ReceiveQueueManager.addDataToOrderList(i + 1, udpStruct);
-                                mOrderedList.add(i + 1, udpStruct);
-                                break;
-                            }
-                        }
-                    else mOrderedList.add(udpStruct);
+                    UdpStruct udpStruct = new UdpStruct(mDatagramPacket.getData(), mDatagramPacket.getLength());
+
+//                    if (mOrderedList.size() > 0)
+//                        for (int i = mOrderedList.size() - 1; i >= 0; i--) {
+//                            Log.i(TAG, "ReceiveQueueManager.getOrderListSize(): ==" + mOrderedList.size());
+//                            Log.i(TAG, "initial: I===" + i);
+//                            if (udpStruct.getSequenceNum() > mOrderedList.get(i).getSequenceNum()) {
+//                                //   ReceiveQueueManager.addDataToOrderList(i + 1, udpStruct);
+//                                mOrderedList.add(i + 1, udpStruct);
+//                                break;
+//                            }
+//                        }
+//                    else mOrderedList.add(udpStruct);
+                     //mOrderedList.add(udpStruct);
+                    ReceiveQueueManager.addDataToUdpOrderQueue(udpStruct);
+
                 }
-                if (mOrderedList.size() > 50) {
-                    ReceiveQueueManager.addDataToUdpOrderQueue(mOrderedList.get(0));
-                    mOrderedList.remove(0);
-                }
-                Log.d(TAG, "time consume: "+(System.currentTimeMillis()-startTime));
+//                if (mOrderedList.size() > 50) {
+//                    ReceiveQueueManager.addDataToUdpOrderQueue(mOrderedList.get(0));
+//                    mOrderedList.remove(0);
+//                }
+//                Log.d(TAG, "time consume: "+(System.currentTimeMillis()-startTime));
             }
             mOrderedList.clear();
             service.shutdown();

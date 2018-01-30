@@ -30,11 +30,12 @@ public class VideoSenderImp implements VideoSender {
     private String mPushType;
     private byte mTypeTag;
     private boolean isRunning = true;
-    private int singleUdpSize = 1000;
+    private int singleUdpSize = 200;
     private static final String TAG = "VideoSenderImp";
     private int udpPackNum = 0;
     private FileOutputStream fileOutputStream;
     private FileOutputStream sendFileOutputStream;
+     private DatagramPacket sendPacket;
     @Override
     public void initial(String pushAddress, String pushType) throws UnknownHostException {
         mInetAddress = InetAddress.getByName(pushAddress.substring(0, pushAddress.indexOf(':')));
@@ -47,7 +48,7 @@ public class VideoSenderImp implements VideoSender {
         try {
             fileOutputStream = new FileOutputStream(new File(Environment.getExternalStorageDirectory().getPath()
                     + "/testH264.h264"));
-            sendFileOutputStream=new FileOutputStream(new File(Environment.getExternalStorageDirectory().getPath()
+            sendFileOutputStream = new FileOutputStream(new File(Environment.getExternalStorageDirectory().getPath()
                     + "/testH264sendFile.h264"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -81,13 +82,16 @@ public class VideoSenderImp implements VideoSender {
         } catch (SocketException e) {
             e.printStackTrace();
         }
+
         mSendThread = new Thread(() -> {
+
             while (isRunning || QueueManager.getFrameQueueSize() > 0) {
                 byte[] frameData = QueueManager.pollDataFromFrameQueue();
                 if (frameData != null) {
                     try {
                         Log.i(TAG, "initialSendWork: frameQueueSize===" + QueueManager.getFrameQueueSize());
-                            sendPacket(frameData, singleUdpSize);
+                           sendPacket(frameData, singleUdpSize);
+
                         //sendPurePacket(frameData, singleUdpSize);
                         fileOutputStream.write(frameData);
                     } catch (IOException e) {
@@ -116,19 +120,29 @@ public class VideoSenderImp implements VideoSender {
         }
         int len = frameData.length;
         int packetNum = len / packetSize;
+        Log.i(TAG, "one bag====: " + packetNum);
         int remainNum = len % packetSize;
         int offset = 0;
         for (int i = 0; i < packetNum; i++) {
             byte[] sendBytes = new byte[packetSize];
             System.arraycopy(frameData, i * packetSize, sendBytes, 0, packetSize);
-            mDatagramSocket.send(new DatagramPacket(sendBytes, sendBytes.length, mInetAddress, mPort));
+            if (sendPacket == null)
+                sendPacket = new DatagramPacket(sendBytes, sendBytes.length, mInetAddress, mPort);
+            else
+                sendPacket.setData(sendBytes);
+            mDatagramSocket.send(sendPacket);
             sendFileOutputStream.write(sendBytes);
             udpPackNum++;
             offset++;
         }
         byte[] remainBytes = new byte[remainNum];
         System.arraycopy(frameData, offset * packetSize, remainBytes, 0, remainNum);
-        mDatagramSocket.send(new DatagramPacket(remainBytes, remainBytes.length, mInetAddress, mPort));
+
+        if (sendPacket == null)
+            sendPacket = new DatagramPacket(remainBytes, remainBytes.length, mInetAddress, mPort);
+        else
+            sendPacket.setData(remainBytes);
+        mDatagramSocket.send(sendPacket);
         sendFileOutputStream.write(remainBytes);
         udpPackNum++;
         Log.i(TAG, "sendPacketNum: " + udpPackNum);
@@ -154,7 +168,12 @@ public class VideoSenderImp implements VideoSender {
             byte[] sendBytes = new byte[packetSize];
             System.arraycopy(srcData, i * packetSize, sendBytes, 0, packetSize);
             byte[] completeUdpData = addHead(sendBytes);
-            mDatagramSocket.send(new DatagramPacket(completeUdpData, completeUdpData.length, mInetAddress, mPort));
+            if (sendPacket == null)
+                sendPacket = new DatagramPacket(completeUdpData, completeUdpData.length, mInetAddress, mPort);
+            else
+                sendPacket.setData(completeUdpData);
+
+            mDatagramSocket.send(sendPacket);
             udpPackNum++;
             offset++;
             Log.i(TAG, "sendPacketNum: " + udpPackNum);
@@ -162,7 +181,12 @@ public class VideoSenderImp implements VideoSender {
         byte[] remainBytes = new byte[remainNum];
         System.arraycopy(srcData, offset * packetSize, remainBytes, 0, remainNum);
         byte[] completeUdpData = addHead(remainBytes);
-        mDatagramSocket.send(new DatagramPacket(completeUdpData, completeUdpData.length, mInetAddress, mPort));
+        if (sendPacket == null)
+            sendPacket = new DatagramPacket(completeUdpData, completeUdpData.length, mInetAddress, mPort);
+        else
+            sendPacket.setData(completeUdpData);
+
+        mDatagramSocket.send(sendPacket);
         udpPackNum++;
         Log.i(TAG, "sendPacketNum: " + udpPackNum);
     }
