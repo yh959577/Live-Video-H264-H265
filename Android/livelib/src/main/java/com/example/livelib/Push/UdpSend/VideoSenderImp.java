@@ -92,7 +92,7 @@ public class VideoSenderImp implements VideoSender {
                         Log.i(TAG, "initialSendWork: frameQueueSize===" + QueueManager.getFrameQueueSize());
                            sendPacket(frameData, singleUdpSize);
 
-                        //sendPurePacket(frameData, singleUdpSize);
+                       // sendPurePacket(frameData, singleUdpSize);
                         fileOutputStream.write(frameData);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -174,6 +174,7 @@ public class VideoSenderImp implements VideoSender {
                 sendPacket.setData(completeUdpData);
 
             mDatagramSocket.send(sendPacket);
+            sendFileOutputStream.write(completeUdpData);
             udpPackNum++;
             offset++;
             Log.i(TAG, "sendPacketNum: " + udpPackNum);
@@ -187,6 +188,7 @@ public class VideoSenderImp implements VideoSender {
             sendPacket.setData(completeUdpData);
 
         mDatagramSocket.send(sendPacket);
+        sendFileOutputStream.write(completeUdpData);
         udpPackNum++;
         Log.i(TAG, "sendPacketNum: " + udpPackNum);
     }
