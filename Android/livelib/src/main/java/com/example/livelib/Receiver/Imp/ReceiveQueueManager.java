@@ -29,8 +29,6 @@ public class ReceiveQueueManager {
     }
 
     static void addDataToUdpOrderQueue(UdpStruct udpStruct) {
-        if (udpOrderQueue.size() > 250)
-            udpOrderQueue.remove();
         udpOrderQueue.add(udpStruct);
     }
 

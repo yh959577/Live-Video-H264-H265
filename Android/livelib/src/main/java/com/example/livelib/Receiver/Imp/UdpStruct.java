@@ -2,11 +2,13 @@ package com.example.livelib.Receiver.Imp;
 
 import com.example.livelib.Util.ByteTransitionUtil;
 
+import java.util.Comparator;
+
 /**
  * Created by Hamik Young on 2018/1/22.
  */
 
-public class UdpStruct {
+public class UdpStruct implements Comparator {
     private int mSequenceNum;
     private long mTimeNum;
     private byte[] mVideoData;
@@ -40,4 +42,8 @@ public class UdpStruct {
 
     byte getVideoTypeTag(){return mVideoTypeTag;}
 
+    @Override
+    public int compare(Object o1, Object o2) {
+        return 0;
+    }
 }

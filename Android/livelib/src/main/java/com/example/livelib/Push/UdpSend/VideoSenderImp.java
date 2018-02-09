@@ -49,7 +49,7 @@ public class VideoSenderImp implements VideoSender {
             fileOutputStream = new FileOutputStream(new File(Environment.getExternalStorageDirectory().getPath()
                     + "/testH264.h264"));
             sendFileOutputStream = new FileOutputStream(new File(Environment.getExternalStorageDirectory().getPath()
-                    + "/testH264sendFile.h264"));
+                        + "/testH264sendFile.h264"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -85,14 +85,14 @@ public class VideoSenderImp implements VideoSender {
 
         mSendThread = new Thread(() -> {
 
-            while (isRunning || QueueManager.getFrameQueueSize() > 0) {
+            while (isRunning) {
                 byte[] frameData = QueueManager.pollDataFromFrameQueue();
                 if (frameData != null) {
                     try {
                         Log.i(TAG, "initialSendWork: frameQueueSize===" + QueueManager.getFrameQueueSize());
                            sendPacket(frameData, singleUdpSize);
 
-                       // sendPurePacket(frameData, singleUdpSize);
+                        // sendPurePacket(frameData, singleUdpSize);
                         fileOutputStream.write(frameData);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -162,6 +162,7 @@ public class VideoSenderImp implements VideoSender {
         int len = srcData.length;
         Log.i(TAG, "sendPacket: len====" + len);
         int packetNum = len / packetSize;
+        Log.i(TAG, "sendPacketTotalNum: "+packetNum);
         int remainNum = len % packetSize;
         int offset = 0;
         for (int i = 0; i < packetNum; i++) {
