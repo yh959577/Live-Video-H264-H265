@@ -35,7 +35,7 @@ public class EncoderImp implements Encoder {
    // private FileOutputStream fileOutputStream;
     private byte[] configureByte;  //the configure info before the key frame
     private int TIMEOUT_USEC = 12000;
-    private int frame_rate = 30;
+    private int frame_rate = 15;
     private byte[] yuv420;
     private Runnable mEncoderRunnable;
     private Handler mHandler;

@@ -52,7 +52,7 @@ public class SendActivity extends AppCompatActivity implements
         mTextureView = findViewById(R.id.video_texture);
         mSendBtn.setOnClickListener(this);
         findViewById(R.id.take_pic_btn).setOnClickListener(this);
-        mEditText.setText("192.168.2.103:8013");
+        mEditText.setText("192.168.2.101:8012");
         presenter = new SendPresenterImp(this, new SendInteractorImp());
         presenter.initialPusher();
     }

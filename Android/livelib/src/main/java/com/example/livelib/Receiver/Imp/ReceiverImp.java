@@ -41,7 +41,7 @@ public class ReceiverImp implements Receiver {
         mPort = Integer.valueOf(address.substring(address.indexOf(':') + 1));
         mUdpReceiver.initial(mInetAddress, mPort);
         mUdpReceiver.startReceive();
-       // mDecoder.startDecode();
+        mDecoder.startDecode();
     }
 
     @Override

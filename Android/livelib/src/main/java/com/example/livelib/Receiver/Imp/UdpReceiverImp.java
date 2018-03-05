@@ -16,6 +16,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -32,8 +33,8 @@ public class UdpReceiverImp implements UdpReceiver {
     private DatagramSocket mDatagramSocket;
     private DatagramPacket mDatagramPacket;
     private byte[] mRcBuf;
- //   private Thread mReceiveThread;
-  //  private Thread mProcessThread;
+    //   private Thread mReceiveThread;
+    //  private Thread mProcessThread;
     private final String TAG = "UdpReceiverImp";
     private List<UdpStruct> mOrderedList;
     private FileOutputStream fileOutputStream;
@@ -56,7 +57,6 @@ public class UdpReceiverImp implements UdpReceiver {
         mSendHeartRunnable = new SendUdpHeartRunnable(mDatagramSocket, address, port);
         mSendHeartService = Executors.newSingleThreadScheduledExecutor();
 
-
         mReceiveService = Executors.newFixedThreadPool(2);
 
         mReceiveService.submit(() -> {
@@ -64,13 +64,13 @@ public class UdpReceiverImp implements UdpReceiver {
                     while (!Thread.currentThread().isInterrupted()) {
                         try {
                             mDatagramSocket.receive(mDatagramPacket);
-                            if (mRcBuf[0] == 'R' && mRcBuf[1] == 'C') {
-                                Log.i(TAG, "receive heart beat!!!!");
-                            } else {
-                                byte[] data = new byte[mDatagramPacket.getLength()];
+                         //   Log.i(TAG, "write to receive file length: "+mDatagramPacket.getLength());
+                         //   fileOutputStream.write(mDatagramPacket.getData(),0,mDatagramPacket.getLength());
+
+                               byte[] data = new byte[mDatagramPacket.getLength()];
                                 System.arraycopy(mDatagramPacket.getData(), 0, data, 0, mDatagramPacket.getLength());
                                 udpCache.add(data);
-                            }
+
                             mDatagramPacket.setLength(mRcBuf.length);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -83,6 +83,7 @@ public class UdpReceiverImp implements UdpReceiver {
             while (!Thread.currentThread().isInterrupted()) {
                 byte[] data = udpCache.poll();
                 if (data != null) {
+                    Log.i(TAG, "process data!!!!!!");
                     try {
                         fileOutputStream.write(data);
 
@@ -112,95 +113,11 @@ public class UdpReceiverImp implements UdpReceiver {
                 }
             }
         });
-
-//
-//        mReceiveThread = new Thread(() -> {
-//            mSendHeartRunnable.run();
-//            while (!Thread.currentThread().isInterrupted()) {
-//                try {
-//                    mDatagramSocket.receive(mDatagramPacket);
-//                    if (mRcBuf[0] == 'R' && mRcBuf[1] == 'C') {
-//                        Log.i(TAG, "receive heart beat!!!!");
-//                    } else {
-//                        byte[] data = new byte[mDatagramPacket.getLength()];
-//                        System.arraycopy(mDatagramPacket.getData(), 0, data, 0, mDatagramPacket.getLength());
-//                        udpCache.add(data);
-////                        Log.i(TAG, "receive video data len===" + mDatagramPacket.getLength());
-////                        try {
-////                            fileOutputStream.write(mDatagramPacket.getData(), 0, mDatagramPacket.getLength());
-////
-////                        } catch (IOException e) {
-////                            e.printStackTrace();
-////                        }
-//
-//
-//                    }
-//                    mDatagramPacket.setLength(mRcBuf.length);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//
-//                //     UdpStruct udpStruct = new UdpStruct(mDatagramPacket.getData(), mDatagramPacket.getLength());
-//
-////                    if (mOrderedList.size() > 0)
-////                        for (int i = mOrderedList.size() - 1; i >= 0; i--) {
-////                            Log.i(TAG, "ReceiveQueueManager.getOrderListSize(): ==" + mOrderedList.size());
-////                            Log.i(TAG, "initial: I===" + i);
-////                            if (udpStruct.getSequenceNum() > mOrderedList.get(i).getSequenceNum()) {
-////                                //   ReceiveQueueManager.addDataToOrderList(i + 1, udpStruct);
-////                                mOrderedList.add(i + 1, udpStruct);
-////                                break;
-////                            }
-////                        }
-////                    else mOrderedList.add(udpStruct);
-//                //mOrderedList.add(udpStruct);
-//                //    ReceiveQueueManager.addDataToUdpOrderQueue(udpStruct);
-//
-//            }
-//
-////                if (mOrderedList.size() > 50) {
-////                    ReceiveQueueManager.addDataToUdpOrderQueue(mOrderedList.get(0));
-////                    mOrderedList.remove(0);
-////                }
-////                Log.d(TAG, "time consume: "+(System.currentTimeMillis()-startTime));
-////            mOrderedList.clear();
-////            service.shutdown();
-////            mDatagramSocket.close();
-//        });
-//        mProcessThread = new Thread(() -> {
-//
-//            while (true) {
-//                byte[] data = udpCache.poll();
-//                if (data != null) {
-//                    try {
-//                        fileOutputStream.write(data);
-//                        Log.i(TAG, "write to file: ");
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                } else {
-//                    try {
-//                        Thread.sleep(500);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//
-//
-//            }
-//        });
-//
-
     }
 
     @Override
     public void startReceive() {
-     //   mReceiveThread.start();
-    //    mProcessThread.start();
         mSendHeartService.scheduleAtFixedRate(mSendHeartRunnable, 5, 45, TimeUnit.SECONDS);
-
-
     }
 
     @Override
@@ -213,8 +130,10 @@ public class UdpReceiverImp implements UdpReceiver {
     private void initialUdp() throws SocketException {
         udpCache = new LinkedBlockingDeque<>();
         mDatagramSocket = new DatagramSocket();
-        mRcBuf = new byte[500];
+        mDatagramSocket.setReceiveBufferSize(1024*1024);
+        mRcBuf = new byte[1024];
         mDatagramPacket = new DatagramPacket(mRcBuf, mRcBuf.length);
         mOrderedList = new ArrayList<>();
+
     }
 }

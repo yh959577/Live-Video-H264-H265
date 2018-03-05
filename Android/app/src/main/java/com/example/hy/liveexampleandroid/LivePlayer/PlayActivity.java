@@ -33,7 +33,7 @@ public class PlayActivity extends AppCompatActivity implements PlayView, View.On
         mSurfaceView = findViewById(R.id.play_texture);
         mPlayBtn.setOnClickListener(this);
         mTakePicBtn.setOnClickListener(this);
-        mEditText.setText("192.168.2.103:8013");
+        mEditText.setText("192.168.2.101:8012");
         mPlayPresenter = new PlayPresenterImp(this);
     }
 

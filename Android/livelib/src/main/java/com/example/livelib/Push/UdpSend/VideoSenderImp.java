@@ -30,7 +30,7 @@ public class VideoSenderImp implements VideoSender {
     private String mPushType;
     private byte mTypeTag;
     private boolean isRunning = true;
-    private int singleUdpSize = 200;
+    private int singleUdpSize = 500;
     private static final String TAG = "VideoSenderImp";
     private int udpPackNum = 0;
     private FileOutputStream fileOutputStream;
@@ -79,6 +79,7 @@ public class VideoSenderImp implements VideoSender {
 
         try {
             mDatagramSocket = new DatagramSocket();
+
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -94,9 +95,11 @@ public class VideoSenderImp implements VideoSender {
 
                         // sendPurePacket(frameData, singleUdpSize);
                         fileOutputStream.write(frameData);
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
                 } else {
                     try {
                         Thread.sleep(500);

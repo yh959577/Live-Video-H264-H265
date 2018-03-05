@@ -51,7 +51,7 @@ public class DecoderImp implements Decoder {
     public void startDecode() {
         isDecodeRunning = true;
         mJointFrameThread.start();
-        mDecodeThread.start();
+        //mDecodeThread.start();
     }
 
     @Override
@@ -66,8 +66,6 @@ public class DecoderImp implements Decoder {
         @Override
         public void run() {
             while (isDecodeRunning) {
-                if (ReceiveQueueManager.getFrameQueueSize()<5)
-                    continue;
                 byte[] frameData = ReceiveQueueManager.getDataFromFrameQueue();
                 if (frameData != null) {
                     Log.i(TAG, "the frame content: " + Arrays.toString(frameData));
@@ -112,6 +110,12 @@ public class DecoderImp implements Decoder {
                                 decodeData(frameData);
                         }
 
+                }else{
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
 
             }
@@ -130,7 +134,7 @@ public class DecoderImp implements Decoder {
             mMediaCodec = MediaCodec.createDecoderByType(codecType);
             //set sps pps can ignore width and height
             mMediaFormat = MediaFormat.createVideoFormat(codecType, 0, 0);
-         //   mMediaFormat.setInteger(MediaFormat.KEY_ROTATION, 90);
+            mMediaFormat.setInteger(MediaFormat.KEY_ROTATION, 90);
             if (codecType.equals(MediaFormat.MIMETYPE_VIDEO_AVC)) {
                 mMediaFormat.setByteBuffer("csd-0", ByteBuffer.wrap(sps));
                 mMediaFormat.setByteBuffer("csd-1", ByteBuffer.wrap(pps));
@@ -147,7 +151,7 @@ public class DecoderImp implements Decoder {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            ByteBuffer[] inputBuffers = mMediaCodec.getInputBuffers();
+
             //  -1表示一直等待；0表示不等待；其他大于0的参数表示等待毫秒数
             int inputBufferIndex = mMediaCodec.dequeueInputBuffer(-1);
             if (inputBufferIndex >= 0) {
@@ -173,11 +177,6 @@ public class DecoderImp implements Decoder {
             if (outputBufferIndex < 0) {
                 //logger.e("outputBufferIndex = " + outputBufferIndex);
                 Log.i(TAG, "decodeDataFailed: ");
-            }
-            try {
-                Thread.sleep(1000/30);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
 
@@ -250,6 +249,9 @@ public class DecoderImp implements Decoder {
                         }
 
                     }
+                    if ((!mDecodeThread.isAlive())&&ReceiveQueueManager.getFrameQueueSize()>30)
+                        mDecodeThread.start();
+
                 }
             }
 
