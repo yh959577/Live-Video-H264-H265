@@ -23,9 +23,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         findViewById(R.id.sendButton).setOnClickListener(this);
         findViewById(R.id.playButton).setOnClickListener(this);
-        PermissionUtil.requestPermission(this,Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        PermissionUtil.requestPermission(this,Manifest.permission.CAMERA,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.RECORD_AUDIO,Manifest.permission.INTERNET);
-
 
     }
     @Override

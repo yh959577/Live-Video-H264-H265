@@ -44,6 +44,7 @@ public class SendActivity extends AppCompatActivity implements
     private SettingPopupWindow mPopupWindow = null;
     private static final String TAG = "SendActivity";
 
+
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send);
@@ -55,6 +56,7 @@ public class SendActivity extends AppCompatActivity implements
         mEditText.setText("192.168.2.101:8012");
         presenter = new SendPresenterImp(this, new SendInteractorImp());
         presenter.initialPusher();
+
     }
 
     @Override
@@ -155,15 +157,15 @@ public class SendActivity extends AppCompatActivity implements
                     if (EncoderChecker.isSupportEncoderType(mPushType))
                         presenter.startPushVideo(mEditText.getText().toString());
                     else {
-                        String toastString="";
+                        String toastString = "";
                         if (mPushType.equals(MediaFormat.MIMETYPE_VIDEO_HEVC))
-                             toastString = "  H265";
-                        else toastString=" H264";
+                            toastString = "  H265";
+                        else toastString = " H264";
                         ToastUtil.toast(this,
                                 getResources().getString(R.string.not_support_encode_type) + toastString,
                                 Toast.LENGTH_SHORT);
                     }
-                    } else {
+                } else {
                     presenter.stopPushVideo();
                 }
                 break;

@@ -16,12 +16,13 @@ import com.example.hy.liveexampleandroid.R;
  * Created by Hamik Young on 2017/12/29.
  */
 
-public class PlayActivity extends AppCompatActivity implements PlayView, View.OnClickListener {
+public class PlayActivity extends AppCompatActivity implements PlayView, View.OnClickListener,SurfaceHolder.Callback {
     Button mPlayBtn;
     Button mTakePicBtn;
     EditText mEditText;
     SurfaceView mSurfaceView;
     PlayPresenter mPlayPresenter;
+    SurfaceHolder mSurfaceHolder;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,10 +32,11 @@ public class PlayActivity extends AppCompatActivity implements PlayView, View.On
         mTakePicBtn = findViewById(R.id.take_pic_btn);
         mEditText = findViewById(R.id.receive_IP);
         mSurfaceView = findViewById(R.id.play_texture);
+        mSurfaceView.getHolder().addCallback(this);
         mPlayBtn.setOnClickListener(this);
         mTakePicBtn.setOnClickListener(this);
         mEditText.setText("192.168.2.101:8012");
-        mPlayPresenter = new PlayPresenterImp(this);
+
     }
 
     @Override
@@ -69,7 +71,7 @@ public class PlayActivity extends AppCompatActivity implements PlayView, View.On
 
     @Override
     public SurfaceHolder supplySurfaceHolder() {
-        return mSurfaceView.getHolder();
+        return mSurfaceHolder;
     }
 
     @Override
@@ -88,5 +90,21 @@ public class PlayActivity extends AppCompatActivity implements PlayView, View.On
     protected void onDestroy() {
         super.onDestroy();
         mPlayPresenter.onDestroy();
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        mSurfaceHolder=holder;
+        mPlayPresenter = new PlayPresenterImp(this);
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+
     }
 }

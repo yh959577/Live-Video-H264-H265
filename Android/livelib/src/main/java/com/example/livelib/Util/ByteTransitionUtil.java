@@ -43,6 +43,18 @@ public class ByteTransitionUtil {
         }
         return num;
     }
+    public static byte[] short2Byte(short a){
+        byte[] b = new byte[2];
 
+        b[0] = (byte) (a >> 8);
+        b[1] = (byte) (a);
+
+        return b;
+    }
+
+
+    public static short byte2Short(byte[] b){
+        return (short) (((b[0] & 0xff) << 8) | (b[1] & 0xff));
+    }
 
 }
